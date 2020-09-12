@@ -7,11 +7,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 
-static char our_path[4096];
-static bool print_info = false;
-static bool run_gc = false;
-static bool install_only = false;
+struct bakeware bw;
 
 static void process_arguments(int argc, char *argv[])
 {
@@ -20,11 +18,11 @@ static void process_arguments(int argc, char *argv[])
             argv[i] = 0;
             break;
         } else if (strcmp(argv[i], "--bw-gc") == 0) {
-            run_gc = true;
+            bw.run_gc = true;
             argv[i] = 0;
             break;
         } else if (strcmp(argv[i], "--bw-install") == 0) {
-            install_only = true;
+            bw.install_only = true;
             argv[i] = 0;
             break;
         } else if (strcmp(argv[i], "--bw-system-install") == 0) {
@@ -32,7 +30,7 @@ static void process_arguments(int argc, char *argv[])
             argv[i] = 0;
             break;
         } else if (strcmp(argv[i], "--bw-info") == 0) {
-            print_info = true;
+            bw.print_info = true;
             argv[i] = 0;
             break;
         }
@@ -41,7 +39,7 @@ static void process_arguments(int argc, char *argv[])
 
 static void update_environment(int argc, char *argv[])
 {
-    bw_set_environment("BAKEWARE_EXECUTABLE", -1, our_path);
+    bw_set_environment("BAKEWARE_EXECUTABLE", -1, bw.path);
 
     int arg_index = 0;
     for (int i = 1; i < argc; i++) {
@@ -58,46 +56,69 @@ static void update_environment(int argc, char *argv[])
     bw_set_environment("BAKEWARE_ARGC", -1, buffer);
 }
 
+static void print_trailer_info(const struct bakeware_trailer *trailer)
+{
+    printf("Trailer version: %d\n", trailer->trailer_version);
+    printf("Compression: %d\n", trailer->compression);
+    printf("Flags: 0x%04x\n", trailer->flags);
+    printf("Contents offset: %d\n", (int) trailer->contents_offset);
+    printf("Contents length: %d\n", (int) trailer->contents_length);
+    printf("SHA256: %s\n", trailer->sha256_ascii);
+}
+
+// Initialize app state
+static void init_bk(int argc, char *argv[])
+{
+    memset(&bw, 0, sizeof(bw));
+
+    bw.argc = argc;
+    bw.argv = argv;
+
+    process_arguments(argc, argv);
+    bw_find_executable_path(bw.path, sizeof(bw.path));
+    bw_cache_directory(bw.cache_dir_base, sizeof(bw.cache_dir_base));
+}
+
+static void run_application()
+{
+    update_environment(bw.argc, bw.argv);
+    execl(bw.app_path, bw.app_path, "start", NULL);
+    bw_err(EXIT_FAILURE, "Failed to start application '%s'", bw.app_path);
+}
+
 int main(int argc, char *argv[])
 {
-    process_arguments(argc, argv);
-    bw_find_executable_path(our_path, sizeof(our_path));
+    init_bk(argc, argv);
 
-    char cache_dir[256];
-    bw_cache_directory(cache_dir, sizeof(cache_dir));
+    bw_warnx("starting '%s' (cachedir=%s)...", bw.path, bw.cache_dir_base);
 
-    bw_warnx("starting '%s' (cachedir=%s)...", our_path, cache_dir);
-
-    int fd = open(our_path, O_CLOEXEC);
-    if (fd < 0)
-        bw_err(EXIT_FAILURE, "Can't open '%s'", our_path);
+    bw.fd = open(bw.path, O_RDONLY);
+    if (bw.fd < 0)
+        bw_err(EXIT_FAILURE, "Can't open '%s'", bw.path);
 
     struct bakeware_trailer trailer;
-    if (bw_read_trailer(fd, &trailer) < 0)
+    if (bw_read_trailer(bw.fd, &trailer) < 0)
         bw_errx(EXIT_FAILURE, "Error reading trailer!");
 
-    if (print_info) {
-        printf("Trailer version: %d\n", trailer.trailer_version);
-        printf("Compression: %d\n", trailer.compression);
-        printf("Flags: 0x%04x\n", trailer.flags);
-        printf("Contents offset: %d\n", (int) trailer.contents_offset);
-        printf("Contents length: %d\n", (int) trailer.contents_length);
-        printf("SHA256: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
-            trailer.sha256[0], trailer.sha256[1],trailer.sha256[2],trailer.sha256[3],
-            trailer.sha256[4], trailer.sha256[5],trailer.sha256[6],trailer.sha256[7],
-            trailer.sha256[8], trailer.sha256[9],trailer.sha256[10],trailer.sha256[11],
-            trailer.sha256[12], trailer.sha256[13],trailer.sha256[14],trailer.sha256[15],
-            trailer.sha256[16], trailer.sha256[17],trailer.sha256[18],trailer.sha256[19],
-            trailer.sha256[20], trailer.sha256[21],trailer.sha256[22],trailer.sha256[23],
-            trailer.sha256[24], trailer.sha256[25],trailer.sha256[26],trailer.sha256[27],
-            trailer.sha256[28], trailer.sha256[29],trailer.sha256[30],trailer.sha256[31]);
+    if (bw.print_info) {
+        print_trailer_info(&bw.trailer);
         exit(EXIT_SUCCESS);
     }
 
-    if (trailer.trailer_version != 1)
+    if (bw.trailer.trailer_version != 1)
         bw_errx(EXIT_FAILURE, "Expecting trailer version 1");
-    if (trailer.compression != BAKEWARE_COMPRESSION_NONE)
-        bw_errx(EXIT_FAILURE, "Don't know how to handle compression type %d", trailer.compression);
+    if (bw.trailer.compression != BAKEWARE_COMPRESSION_NONE)
+        bw_errx(EXIT_FAILURE, "Don't know how to handle compression type %d", bw.trailer.compression);
 
-    update_environment(argc, argv);
+    cache_init(&bw);
+
+    if (cache_validate(&bw) < 0)
+        bw_errx(EXIT_FAILURE, "Unrecoverable validation error");
+
+    if (cache_read_app_data(&bw) < 0)
+        bw_errx(EXIT_FAILURE, "Unrecoverable application data error");
+
+    close(bw.fd);
+
+    run_application();
 }

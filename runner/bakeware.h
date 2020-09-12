@@ -1,5 +1,6 @@
 #ifndef BAKEWARE_H
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -38,6 +39,7 @@ struct bakeware_trailer
     size_t contents_length;
 
     uint8_t sha256[32];
+    char sha256_ascii[65];
 };
 
 #define BAKEWARE_COMPRESSION_NONE 0
@@ -48,7 +50,34 @@ int bw_read_trailer(int fd, struct bakeware_trailer *trailer);
 // CPIO
 int cpio_extract_all(int fd, size_t cpio_len);
 
-
 // Cache management
+
+struct bakeware; // FIXME
+void cache_init(struct bakeware *bw);
+int cache_validate(struct bakeware *bw);
+int cache_read_app_data(struct bakeware *bw);
+
+// Program data
+struct bakeware
+{
+    int argc;
+    char **argv;
+
+    char path[4096];
+    struct bakeware_trailer trailer;
+
+    int fd;
+
+    bool print_info;
+    bool run_gc;
+    bool install_only;
+
+    // Cache
+    char cache_dir_base[256];
+    char cache_dir_app[256 + 65];
+
+    // Application invocation
+    char app_path[256];
+};
 
 #endif
