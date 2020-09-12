@@ -1,9 +1,23 @@
 defmodule SousChef do
-  @moduledoc """
-  SousChef keeps the contexts that define your domain
-  and business logic.
+  alias SousChef.{Executable, Repo}
 
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
-  """
+  def create_executable(attrs) do
+    Executable.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def delete_executable(executable) do
+    Repo.delete(executable)
+  end
+
+  def executables(), do: Repo.all(Executable)
+
+  def find_executable(name) do
+    Repo.get_by(Executable, name: name) || {:error, :not_found}
+  end
+
+  def update_executable(exec, attrs) do
+    Executable.changeset(exec, attrs)
+    |> Repo.update()
+  end
 end

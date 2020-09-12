@@ -19,10 +19,13 @@ defmodule SousChefWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", SousChefWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", SousChefWeb do
+    pipe_through :api
+
+    resources "/executables", ExecutableController, param: "name"
+
+    get "/check/:name", ExecutableController, :check
+  end
 
   # Enables LiveDashboard only for development
   #
