@@ -44,7 +44,10 @@ int main(int argc, char *argv[])
     process_arguments(argc, argv);
     bw_find_executable_path(our_path, sizeof(our_path));
 
-    bw_warnx("starting '%s'...", our_path);
+    char cache_dir[256];
+    bw_cache_directory(cache_dir, sizeof(cache_dir));
+
+    bw_warnx("starting '%s' (cachedir=%s)...", our_path, cache_dir);
 
     int fd = open(our_path, O_CLOEXEC);
     if (fd < 0)
@@ -53,8 +56,6 @@ int main(int argc, char *argv[])
     struct bakeware_trailer trailer;
     if (bw_read_trailer(fd, &trailer) < 0)
         bw_errx(EXIT_FAILURE, "Error reading trailer!");
-    if (trailer.trailer_version != 1)
-        bw_errx(EXIT_FAILURE, "Expecting trailer version 1");
 
     if (print_info) {
         printf("Trailer version: %d\n", trailer.trailer_version);
@@ -73,6 +74,11 @@ int main(int argc, char *argv[])
             trailer.sha256[28], trailer.sha256[29],trailer.sha256[30],trailer.sha256[31]);
         exit(EXIT_SUCCESS);
     }
+
+    if (trailer.trailer_version != 1)
+        bw_errx(EXIT_FAILURE, "Expecting trailer version 1");
+    if (trailer.compression != BAKEWARE_COMPRESSION_NONE)
+        bw_errx(EXIT_FAILURE, "Don't know how to handle compression type %d", trailer.compression);
 
 }
 

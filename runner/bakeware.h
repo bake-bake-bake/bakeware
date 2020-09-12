@@ -22,6 +22,10 @@ void bw_warnx(const char *format, ...) BW_WARN_ATTRS;
 
 void bw_find_executable_path(char *path, size_t len);
 
+void bw_cache_directory(char *path, size_t len);
+
+
+
 // Trailer parsing
 struct bakeware_trailer
 {
@@ -35,6 +39,15 @@ struct bakeware_trailer
     uint8_t sha256[32];
 };
 
+#define BAKEWARE_COMPRESSION_NONE 0
+#define BAKEWARE_COMPRESSION_ZSTD 1
+
 int bw_read_trailer(int fd, struct bakeware_trailer *trailer);
+
+// CPIO
+int cpio_extract_all(int fd, size_t cpio_len);
+
+
+// Cache management
 
 #endif

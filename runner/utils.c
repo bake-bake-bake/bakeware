@@ -93,3 +93,19 @@ void bw_find_executable_path(char *path, size_t len)
 #error "What system is this???"
 #endif
 }
+
+/**
+ * Return the path to the user's cache directory for Bakeware data
+ */
+void bw_cache_directory(char *path, size_t len)
+{
+#if defined (_WIN64) || defined(_WIN32)
+#error Implement
+#elif __APPLE__
+    snprintf(path, len, "%s//Library/Caches/Bakeware", getenv("HOME"));
+#elif (__linux || __unix || __posix)
+    snprintf(path, len, "%s/.cache/bakeware", getenv("HOME"));
+#else
+#error Implement
+#endif
+}

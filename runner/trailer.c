@@ -25,7 +25,7 @@ static uint16_t read_be16(const uint8_t *buffer)
 int bw_read_trailer(int fd, struct bakeware_trailer *trailer)
 {
     memset(trailer, 0, sizeof(struct bakeware_trailer));
-    if (lseek(fd, BW_TRAILER_V1_LENGTH, SEEK_END) < 0) {
+    if (lseek(fd, -BW_TRAILER_V1_LENGTH, SEEK_END) < 0) {
         bw_warn("lseek");
         return -1;
     }
@@ -37,7 +37,8 @@ int bw_read_trailer(int fd, struct bakeware_trailer *trailer)
     }
 
     if (memcmp(&buffer[BW_TRAILER_V1_MAGIC], "BAKE", 4) != 0) {
-        bw_warn("Incorrect Bakeware magic");
+        bw_warnx("Incorrect Bakeware magic %d %d %d %d",
+            buffer[BW_TRAILER_V1_MAGIC], buffer[BW_TRAILER_V1_MAGIC+1], buffer[BW_TRAILER_V1_MAGIC+2], buffer[BW_TRAILER_V1_MAGIC+3]);
         return -1;
     }
 
