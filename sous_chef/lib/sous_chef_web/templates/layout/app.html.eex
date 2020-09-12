@@ -13,15 +13,16 @@
       <section class="container">
         <nav role="navigation">
           <ul>
-            <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
             <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
               <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
             <% end %>
           </ul>
         </nav>
-        <a href="https://phoenixframework.org/" class="phx-logo">
-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
-        </a>
+        <img src="<%= Routes.static_path(@conn, "/images/bakeware_logo.png") %>" alt="Bakeware Logo"/>
+        <div>
+          <h1>Sous Chef</h1>
+          <h3>A Bakeware update server</h3>
+        </div>
       </section>
     </header>
     <main role="main" class="container">
