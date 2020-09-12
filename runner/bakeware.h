@@ -23,6 +23,7 @@ void bw_warnx(const char *format, ...) BW_WARN_ATTRS;
 void bw_find_executable_path(char *path, size_t len);
 
 void bw_cache_directory(char *path, size_t len);
+int bw_set_environment(const char *key, int index, const char *value);
 
 
 

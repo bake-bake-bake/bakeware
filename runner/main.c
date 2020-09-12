@@ -39,6 +39,25 @@ static void process_arguments(int argc, char *argv[])
     }
 }
 
+static void update_environment(int argc, char *argv[])
+{
+    bw_set_environment("BAKEWARE_EXECUTABLE", -1, our_path);
+
+    int arg_index = 0;
+    for (int i = 1; i < argc; i++) {
+        const char *arg = argv[i];
+
+        if (*arg == 0)
+            continue;
+
+        arg_index++;
+        bw_set_environment("BAKEWARE_ARG", arg_index, arg);
+    }
+    char buffer[12];
+    snprintf(buffer, sizeof(buffer), "%d", arg_index);
+    bw_set_environment("BAKEWARE_ARGC", -1, buffer);
+}
+
 int main(int argc, char *argv[])
 {
     process_arguments(argc, argv);
@@ -80,5 +99,5 @@ int main(int argc, char *argv[])
     if (trailer.compression != BAKEWARE_COMPRESSION_NONE)
         bw_errx(EXIT_FAILURE, "Don't know how to handle compression type %d", trailer.compression);
 
+    update_environment(argc, argv);
 }
-

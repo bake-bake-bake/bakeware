@@ -1,5 +1,6 @@
-#include "bakeware.h"
+#define _GNU_SOURCE
 
+#include "bakeware.h"
 #include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -109,3 +110,21 @@ void bw_cache_directory(char *path, size_t len)
 #error Implement
 #endif
 }
+
+/**
+ * Helper function for setting environment variables
+ */
+int bw_set_environment(const char *key, int index, const char *value)
+{
+    char *str;
+    int len;
+    if (index >= 0)
+      len = asprintf(&str, "%s=%s", key, value);
+    else
+      len = asprintf(&str, "%s%d=%s", key, index, value);
+
+    if (len < 0)
+        bw_err(EXIT_FAILURE, "asprintf");
+    return putenv(str);
+}
+

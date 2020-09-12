@@ -14,6 +14,17 @@ The following arguments may be passed:
 * `--bw-install` - Do not run the application. Stop after installing to the cache directory. (NOT IMPLEMENTED)
 * `--bw-system-install` - Install to a system-wide location (NOT IMPLEMENTED)
 
+## Environment variables
+
+The Bakeware launcher sets the following environment variables for use in Elixir:
+
+Variable name                       | Description
+ ---------------------------------- | --------------------------
+`BAKEWARE_EXECUTABLE`               | The absolute path to the executable
+`BAKEWARE_ARG1`                     | The first commandline argument
+`BAKEWARE_ARGn`                     | The nth commandline argument
+`BAKEWARE_ARGC`                     | The number of arguments
+
 ## Binary format
 
 Bakeware application binaries look like this:
