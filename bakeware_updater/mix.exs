@@ -13,12 +13,15 @@ defmodule BakewareUpdater.MixProject do
 
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      mod: {BakewareUpdater.Application, []}
     ]
   end
 
   defp deps do
     [
+      {:castore, "~> 0.1"},
+      {:jason, "~> 1.2"},
       {:mint, "~> 1.0"},
       {:temp, "~> 0.4"}
     ]
