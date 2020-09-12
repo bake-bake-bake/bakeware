@@ -1,20 +1,30 @@
 # SousChef
 
-To start your Phoenix server:
+An example update server for binary executables create with bakeware
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Install Node.js dependencies with `npm install` inside the `assets` directory
-  * Start Phoenix endpoint with `mix phx.server`
+## Using
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+SousChef currently functions as a JSON API with a few particularly useful endpoints:
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+* `/api/check/:exec_name` - Check your version against the latest version on the update server. Requires `version` argument to be passed. If you are out of date, `%{status: "update", url: "some-url"}` will be returned
+  * `curl sous-chef.jonjon.dev/api/check/hello_world?version=0.0.1`
+  
 
-## Learn more
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+## Deploying
+
+This is currently deployed with Gigalixir. Since it is a folder of a repo, `git subtree` must be used. If you're setup and authorized, you can use the following commands to deploy:
+
+**Deploy normally**
+
+```sh
+git subtree push --prefix sous_chef gigalixir master
+```
+
+**Deploy "fresh"**
+
+If you change the git history (like a rebase) you'll have to clean the gigalixir cache
+
+```sh
+git -c http.extraheader="GIGALIXIR-CLEAN: true" subtree --prefix sous_chef push gigalixir master
+```
