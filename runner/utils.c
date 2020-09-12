@@ -42,6 +42,19 @@ void bw_errx(int status, const char *format, ...)
     exit(status);
 }
 
+void bw_warn(const char *format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+
+    int err = errno;
+    fprintf(stderr, "bakeware: ");
+    vfprintf(stderr, format, ap);
+    fprintf(stderr, ": %s\n", strerror(err));
+
+    va_end(ap);
+}
+
 void bw_warnx(const char *format, ...)
 {
     va_list ap;
