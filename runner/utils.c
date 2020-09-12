@@ -54,8 +54,10 @@ void bw_warnx(const char *format, ...)
     va_end(ap);
 }
 
-int bw_find_executable_path(char *path, size_t len)
+void bw_find_executable_path(char *path, size_t len)
 {
+    memset(path, 0, len);
+
     // See https://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
 #ifdef _WIN64
     GetModuleFileName(NULL, path, len);

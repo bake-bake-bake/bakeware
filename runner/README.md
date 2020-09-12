@@ -12,3 +12,15 @@ The following arguments may be passed:
 * `--bw-gc` - This cleans up all unused entries in the cache (NOT IMPLEMENTED)
 * `--bw-install` - Do not run the application. Stop after installing to the cache directory. (NOT IMPLEMENTED)
 * `--bw-system-install` - Install to a system-wide location (NOT IMPLEMENTED)
+
+## Details
+
+Bakeware application binaries look like this:
+
+* Bakeware application runner
+* A CPIO archive of an Erlang/OTP release
+* Trailer
+
+
+
+Bakeware applications all have the following trailer

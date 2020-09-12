@@ -1,6 +1,9 @@
 #include "bakeware.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
+static char our_path[4096];
 
 static void process_arguments(int argc, char *argv[])
 {
@@ -27,6 +30,8 @@ static void process_arguments(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
     process_arguments(argc, argv);
+    bw_find_executable_path(our_path, sizeof(our_path));
 
+    bw_warnx("starting '%s'...", our_path);
 }
 
