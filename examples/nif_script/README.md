@@ -1,6 +1,6 @@
 # NifScript
 
-This example shows how one would build a NIF in a Bakeware executable
+This example shows how one would build a NIF in a Bakeware executable.
 
 ## Building and running
 
