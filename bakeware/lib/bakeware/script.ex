@@ -1,11 +1,20 @@
 defmodule Bakeware.Script do
   @moduledoc """
   Helper to generate a script that takes command line arguments
+
+  #{
+    File.read!("README.md")
+    |> String.split(~r/<!-- SCRIPT !-->/)
+    |> Enum.drop(1)
+    |> hd()
+  }
   """
 
   @type args :: [String.t()]
+  @type bakeware_executable :: String.t()
 
-  @callback main(args) :: non_neg_integer() | :abort | charlist() | String.t()
+  @callback main(bakeware_executable, args) ::
+              non_neg_integer() | :abort | charlist() | String.t()
 
   @doc "Defines an app spec that will execute a `script`"
   defmacro __using__(_opts) do
@@ -24,10 +33,20 @@ defmodule Bakeware.Script do
 
       @doc false
       def _main() do
+        bakeware_executable = System.get_env("BAKEWARE_EXECUTABLE")
         {argc, ""} = Integer.parse(System.get_env("BAKEWARE_ARGC"))
-        args = for v <- 1..argc, do: System.get_env("BAKEWARE_ARG#{v}")
 
-        case main(args) do
+        args =
+          if argc > 0 do
+            for v <- 1..argc, do: System.get_env("BAKEWARE_ARG#{v}")
+          else
+            []
+          end
+
+        IO.inspect(argc, label: "ARGC _main")
+        IO.inspect(args, label: "ARGV _main")
+
+        case main(bakeware_executable, args) do
           status when is_integer(status) and status >= 0 ->
             :erlang.halt(status)
 
