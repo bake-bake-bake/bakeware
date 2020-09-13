@@ -21,7 +21,7 @@ defmodule Bakeware.MixProject do
       preferred_cli_env: %{
         docs: :docs,
         "hex.publish": :docs,
-        "hex.build": :docs,
+        "hex.build": :docs
       }
     ]
   end
@@ -39,7 +39,7 @@ defmodule Bakeware.MixProject do
   defp deps do
     [
       {:elixir_make, "~> 0.6", runtime: false},
-      {:ex_doc, "~> 0.22", only: :docs, runtime: false},
+      {:ex_doc, "~> 0.22", only: :docs, runtime: false}
     ]
   end
 
@@ -63,8 +63,7 @@ defmodule Bakeware.MixProject do
       extras: ["README.md"],
       main: "readme",
       source_ref: "v#{@version}",
-      source_url: @source_url,
+      source_url: @source_url
     ]
   end
-
 end
