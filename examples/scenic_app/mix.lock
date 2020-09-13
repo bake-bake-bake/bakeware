@@ -1,0 +1,7 @@
+%{
+  "elixir_make": {:hex, :elixir_make, "0.6.1", "8faa29a5597faba999aeeb72bbb9c91694ef8068f0131192fb199f98d32994ef", [:mix], [], "hexpm", "35d33270680f8d839a4003c3e9f43afb595310a592405a00afc12de4c7f55a18"},
+  "font_metrics": {:hex, :font_metrics, "0.3.1", "025ff9957040eb4d6430c306a4445bad5d9f43ec24448c1647df7cb63b5dd88c", [:mix], [{:msgpax, "~> 2.2", [hex: :msgpax, repo: "hexpm", optional: false]}], "hexpm", "6dff6525d49d84173ce20b4cba2457b2289e83bcc2be19c2aa761dbe9f631033"},
+  "msgpax": {:hex, :msgpax, "2.2.4", "7b3790ef684089076b63c0f08c2f4b079c6311daeb006b69e4ed2bf67518291e", [:mix], [{:plug, "~> 1.0", [hex: :plug, repo: "hexpm", optional: true]}], "hexpm", "b351b6d992d79624a8430a99d21a41b36b1b90edf84326a294e9f4a2de11f089"},
+  "scenic": {:hex, :scenic, "0.10.2", "f4f0a00eed677ac50a7b297375c0323d03f4273580f17c50b877abfaf0c6dc1f", [:make, :mix], [{:elixir_make, "~> 0.5", [hex: :elixir_make, repo: "hexpm", optional: false]}, {:font_metrics, "~> 0.3", [hex: :font_metrics, repo: "hexpm", optional: false]}], "hexpm", "6f1445a77b9ad6bac73ef0677a6c133685042eb69cc666b1516a0a037a76e8f4"},
+  "scenic_driver_glfw": {:hex, :scenic_driver_glfw, "0.10.1", "df7a11bc1d23415dd48c7796a70a6ad98b9cf77554078d79115d6c6e58b87eda", [:make, :mix], [{:elixir_make, "~> 0.6", [hex: :elixir_make, repo: "hexpm", optional: false]}, {:scenic, "~> 0.10", [hex: :scenic, repo: "hexpm", optional: false]}], "hexpm", "d2f2ef0a1d099a6e1904616c0a95ff0fc554342cf7936e6bb73c2d7027e7557e"},
+}
