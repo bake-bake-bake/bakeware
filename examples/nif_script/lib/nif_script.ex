@@ -8,7 +8,8 @@ defmodule NifScript do
     :ok
   end
 
-  def main(args) do
-    IO.warn("Unexpected arguments: #{inspect(args)}")
+  def main(_args) do
+    IO.puts("Try calling with two integer arguments")
+    :error
   end
 end
