@@ -4,6 +4,46 @@
 
 ## Using
 
+### Mix release
+
+Bakeware supports tieing in executable binary assembly into a Mix release
+as a step by using the `Bakeware.assemble/1` function.
+
+<!-- ASSEMBLE !-->
+This will assemble the neccessary components to create a Bakeware executable
+that can be distributed across machines to run the script/application without
+extra environment setup (such as installing Elixir/Erlang, etc)
+
+To use, add this to your release as a step after assembly:
+
+```elixir
+def release do
+  [
+    demo: [
+      steps: [:assemble, &Bakeware.assemble/1]
+    ]
+  ]
+end
+```
+<!-- ASSEMBLE !-->
+
+### Mix task
+
+Bakeware also supports manually assembling the executable via `mix bakeware.assemble`
+
+<!-- ASSEMBLE_TASK !-->
+Generally, it is expected that you integrate assembly as a Mix release
+step (see `Bakeware.assemble/1`)
+
+However, this task provides the ability to manually assemble the bakeware executable
+binary either for the current project, or for other specified release directories.
+
+Supported options:
+* `--name` - Name to use for the binary. Defaults to the app name
+* `--path` - path to release directory. Defaults to release directory
+  of current Mix project
+<!-- ASSEMBLE_TASK !-->
+
 ## Commandline arguments
 
 In general, commandline arguments passed to Bakeware applications are passed through to Elixir. A few special commandline arguments can be passed to adjust the launchers behavior. Bakeware stops parsing commandline arguments when it encounters a `--`. Processed commandline arguments are not passed along to Elixir.

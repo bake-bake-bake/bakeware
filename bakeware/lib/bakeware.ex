@@ -1,18 +1,13 @@
 defmodule Bakeware do
-  @moduledoc """
-  Documentation for `Bakeware`.
-  """
-
   @doc """
-  Hello world.
+  Assembler function to be used as a Mix release step
 
-  ## Examples
-
-      iex> Bakeware.hello()
-      :world
-
+  #{
+    File.read!("README.md")
+    |> String.split(~r/<!-- ASSEMBLE !-->/)
+    |> Enum.drop(1)
+    |> hd()
+  }
   """
-  def hello do
-    :world
-  end
+  defdelegate assemble(release), to: Bakeware.Assembler
 end
