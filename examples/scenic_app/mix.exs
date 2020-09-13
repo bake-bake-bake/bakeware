@@ -18,7 +18,7 @@ defmodule ScenicApp.MixProject do
   def application do
     [
       mod: {ScenicApp, []},
-      extra_applications: []
+      extra_applications: [:crypto]
     ]
   end
 
