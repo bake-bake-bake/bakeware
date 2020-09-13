@@ -26,4 +26,3 @@ Hello
 $ _build/prod/rel/bakeware/simple_script --upcase Hello
 HELLO
 ```
-
