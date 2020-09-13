@@ -1,13 +1,17 @@
 defmodule SimpleScript.MixProject do
   use Mix.Project
 
+  @app :simple_script
+
   def project do
     [
-      app: :simple_script,
+      app: @app,
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      releases: [{@app, release()}],
+      preferred_cli_env: [release: :prod]
     ]
   end
 
@@ -21,8 +25,16 @@ defmodule SimpleScript.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:bakeware, path: "../../bakeware"}
+    ]
+  end
+
+  defp release do
+    [
+      overwrite: true,
+      cookie: "#{@app}_cookie",
+      steps: [:assemble, &Bakeware.assemble/1],
+      strip_beams: Mix.env() == :prod
     ]
   end
 end
