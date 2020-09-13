@@ -11,13 +11,13 @@ guide](https://hexdocs.pm/scenic/install_dependencies.html#content).
 
 You'll also need to install `glfw` and `glew` libraries to be able to run:
 
-**MacOS**
+### MacOS
 
 ```sh
 brew install glfw3 glew pkg-config
 ```
 
-**Ubuntu**
+### Ubuntu
 
 ```sh
 apt-get install pkgconf libglfw3 libglfw3-dev libglew2.1 libglew-dev
