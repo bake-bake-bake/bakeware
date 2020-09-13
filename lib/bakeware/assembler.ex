@@ -1,10 +1,10 @@
 defmodule Bakeware.Assembler do
   @moduledoc false
-  defstruct [:cpio, :launcher, :name, :output, :path, :release, :trailer]
+  defstruct [:cpio, :launcher, :name, :output, :path, :release, :rel_path, :trailer]
 
   @doc false
   def assemble(%Mix.Release{} = release) do
-    %__MODULE__{name: release.name, path: release.path, release: release}
+    %__MODULE__{name: release.name, rel_path: release.path, release: release}
     |> do_assemble()
     # Assembler requires %Mix.Release{} struct returned
     |> Map.get(:release)
@@ -12,23 +12,23 @@ defmodule Bakeware.Assembler do
 
   @doc false
   def assemble(path, name) do
-    %__MODULE__{name: name, path: Path.expand(path)}
+    %__MODULE__{name: name, rel_path: Path.expand(path)}
     |> do_assemble()
   end
 
   defp create_paths(assembler) do
-    tmp_name =
-      Path.join(
-        assembler.path,
-        "bakeware-gen-#{:crypto.strong_rand_bytes(16) |> Base.encode16()}"
-      )
+    bake_path = Path.dirname(assembler.rel_path) |> Path.join("bakeware")
+    tmp_name = :crypto.strong_rand_bytes(16) |> Base.encode16()
+
+    _ = File.mkdir_p!(bake_path)
 
     %{
       assembler
-      | cpio: "#{tmp_name}.cpio",
+      | path: bake_path,
+        cpio: Path.join(bake_path, "#{tmp_name}.cpio"),
         launcher: Path.join(:code.priv_dir(:bakeware), "launcher"),
-        output: Path.join(assembler.path, "#{assembler.name}"),
-        trailer: "#{tmp_name}.trailer"
+        output: Path.join(bake_path, "#{assembler.name}"),
+        trailer: Path.join(bake_path, "#{tmp_name}.trailer")
     }
   end
 
@@ -47,7 +47,7 @@ defmodule Bakeware.Assembler do
   end
 
   defp add_start_script(assembler) do
-    start_path = Path.join(assembler.path, "start")
+    start_path = Path.join(assembler.rel_path, "start")
     start_script_path = "bin/simple_app"
 
     script = """
@@ -67,7 +67,7 @@ defmodule Bakeware.Assembler do
 
   defp build_cpio(assembler) do
     # Use MuonTrap for piping? ¬
-    _ = :os.cmd('cd #{assembler.path} && find . | cpio -o -H newc -v > #{assembler.cpio}')
+    _ = :os.cmd('cd #{assembler.rel_path} && find . | cpio -o -H newc -v > #{assembler.cpio}')
     assembler
   end
 
