@@ -28,6 +28,13 @@ Here's a quick list of features:
 * Commandline argument passing conveniences
 * Lots of examples
 
+Some stats:
+
+* Executables are 12-15 MB on Linux and 5-7 MB on OSX for simple Elixir,
+  Phoenix, and Scenic apps (Zstd compression enabled)
+* Non-scientifically - ~0.5s startup times or better on our computers (measured
+  with `time`)
+
 How does Bakeware work?
 
 Bakeware combines a compressed OTP release archive with a smart
