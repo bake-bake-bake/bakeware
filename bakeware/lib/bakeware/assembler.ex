@@ -66,8 +66,11 @@ defmodule Bakeware.Assembler do
   end
 
   defp build_cpio(assembler) do
-    # Use MuonTrap for piping? ¬
-    _ = :os.cmd('cd #{assembler.rel_path} && find . | cpio -o -H newc -v > #{assembler.cpio}')
+    _ =
+      :os.cmd(
+        'cd #{assembler.rel_path} && find . | cpio -o -H newc -v | zstd -15 - > #{assembler.cpio}'
+      )
+
     assembler
   end
 
@@ -77,7 +80,14 @@ defmodule Bakeware.Assembler do
     offset = File.stat!(assembler.launcher).size
     cpio_size = File.stat!(assembler.cpio).size
 
-    trailer_bin = <<hash::binary, cpio_size::32, offset::32, 0::16, 0::8, 1::8, "BAKE">>
+    compression = 1
+    trailer_version = 1
+    flags = 0
+
+    trailer_bin =
+      <<hash::binary, cpio_size::32, offset::32, flags::16, compression::8, trailer_version::8,
+        "BAKE">>
+
     File.write!(assembler.trailer, trailer_bin)
     assembler
   end
