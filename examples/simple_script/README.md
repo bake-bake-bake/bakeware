@@ -18,7 +18,7 @@ mix release
 ```
 
 The executable is in the `_build/prod/rel/bakeware` directory. Here's what it
-should look like when you run it with no arguments:
+should look like when you run it:
 
 ```sh
 $ _build/prod/rel/bakeware/simple_script Hello
