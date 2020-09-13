@@ -1,4 +1,4 @@
-defmodule SimpleEval do
+defmodule IExPrompt do
   use Bakeware.Script
 
   def main(_) do

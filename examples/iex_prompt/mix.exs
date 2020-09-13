@@ -1,7 +1,7 @@
-defmodule SimpleEval.MixProject do
+defmodule IExPrompt.MixProject do
   use Mix.Project
 
-  @app :simple_eval
+  @app :iex_prompt
 
   def project do
     [
@@ -19,7 +19,7 @@ defmodule SimpleEval.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {SimpleEval, []}
+      mod: {IExPrompt, []}
     ]
   end
 
