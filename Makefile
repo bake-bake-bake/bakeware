@@ -22,6 +22,7 @@ PREFIX = $(MIX_APP_PATH)/priv
 BUILD  = $(MIX_APP_PATH)/obj
 
 CFLAGS ?= -O2 -Wall -Wextra -Wno-unused-parameter -pedantic
+LDFLAGS ?=
 
 all: $(BUILD) $(PREFIX) $(PREFIX)/launcher
 
