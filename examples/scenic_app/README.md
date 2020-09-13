@@ -7,8 +7,23 @@ the default new project application with modifications to support Bakeware.
 
 Building requires a number of libraries and their development header files. See
 the [Scenic installation
-guide](https://hexdocs.pm/scenic/install_dependencies.html#content). After
-you've worked through that, change to this directory and run the following:
+guide](https://hexdocs.pm/scenic/install_dependencies.html#content).
+
+You'll also need to install `glfw` and `glew` libraries to be able to run:
+
+**MacOS**
+
+```sh
+brew install glfw3 glew pkg-config
+```
+
+**Ubuntu**
+
+```sh
+apt-get install pkgconf libglfw3 libglfw3-dev libglew2.1 libglew-dev
+```
+
+After you've worked through that, change to this directory and run the following:
 
 ```sh
 export MIX_ENV=prod
