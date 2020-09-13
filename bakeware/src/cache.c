@@ -103,10 +103,28 @@ int cache_validate(struct bakeware *bw)
         bw_warn("Couldn't seek to start of CPIO");
         return -1;
     }
-    if (cpio_extract_all(bw->fd, bw->trailer.contents_length, bw->cache_dir_app) < 0) {
+
+    switch (bw->trailer.compression) {
+    case BAKEWARE_COMPRESSION_NONE:
+        bw->reader = read;
+        break;
+
+    case BAKEWARE_COMPRESSION_ZSTD:
+        unzstd_init(bw->trailer.contents_length);
+        bw->reader = unzstd_read;
+        break;
+
+    default:
+        bw_fatalx("Don't know how to handle compression type %d", bw->trailer.compression);
+        break;
+    }
+    if (cpio_extract_all(bw->reader, bw->fd, bw->cache_dir_app) < 0) {
         bw_warn("CPIO extraction failed.");
         return -1;
     }
+
+    if (bw->trailer.compression == BAKEWARE_COMPRESSION_ZSTD)
+        unzstd_free();
 
     if (!file_exists_in_cache_dir(bw, "start")) {
         bw_warn("Missing `start` script in CPIO");

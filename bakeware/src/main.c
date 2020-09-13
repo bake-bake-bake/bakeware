@@ -107,8 +107,6 @@ int main(int argc, char *argv[])
 
     if (bw.trailer.trailer_version != 1)
         bw_fatalx("Expecting trailer version 1");
-    if (bw.trailer.compression != BAKEWARE_COMPRESSION_NONE)
-        bw_fatalx("Don't know how to handle compression type %d", bw.trailer.compression);
 
     cache_init(&bw);
 
