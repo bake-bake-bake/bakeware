@@ -26,7 +26,7 @@ static uint16_t read_be16(const uint8_t *buffer)
 
 static void sha256_to_ascii(const uint8_t *input, char *output)
 {
-    sprintf(output, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
+    sprintf(output, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
         input[0], input[1],input[2],input[3],
         input[4], input[5],input[6],input[7],
         input[8], input[9],input[10],input[11],
