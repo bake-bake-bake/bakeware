@@ -15,7 +15,8 @@ defmodule SousChefWeb.ExecutableView do
       id: executable.id,
       name: executable.name,
       active: executable.active,
-      versions: executable.versions
+      versions: executable.versions,
+      type: executable.type
     }
   end
 end
