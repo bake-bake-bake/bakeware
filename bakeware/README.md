@@ -1,6 +1,8 @@
 # Bakeware
 
-**TODO: Add description**
+![The Bakeware oven](assets/bakeware_logo200.png)
+
+TBD
 
 ## Using
 
@@ -10,7 +12,7 @@ Bakeware supports tieing in executable binary assembly into a Mix release
 as a step by using the `Bakeware.assemble/1` function.
 
 <!-- ASSEMBLE !-->
-This will assemble the neccessary components to create a Bakeware executable
+This will assemble the necessary components to create a Bakeware executable
 that can be distributed across machines to run the script/application without
 extra environment setup (such as installing Elixir/Erlang, etc)
 
@@ -39,6 +41,7 @@ However, this task provides the ability to manually assemble the bakeware execut
 binary either for the current project, or for other specified release directories.
 
 Supported options:
+
 * `--name` - Name to use for the binary. Defaults to the app name
 * `--path` - path to release directory. Defaults to release directory
   of current Mix project
