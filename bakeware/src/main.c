@@ -81,7 +81,7 @@ static void init_bk(int argc, char *argv[])
 
 static void run_application()
 {
-    bw_warnx("Running %s...", bw.app_path);
+    bw_debug("Running %s...", bw.app_path);
     update_environment(bw.argc, bw.argv);
     execl(bw.app_path, bw.app_path, NULL);
     bw_fatal("Failed to start application '%s'", bw.app_path);
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 {
     init_bk(argc, argv);
 
-    bw_warnx("starting '%s' (cachedir=%s)...", bw.path, bw.cache_dir_base);
+    bw_debug("starting '%s' (cachedir=%s)...", bw.path, bw.cache_dir_base);
 
     bw.fd = open(bw.path, O_RDONLY);
     if (bw.fd < 0)
