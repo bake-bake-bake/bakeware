@@ -10,7 +10,8 @@ defmodule SimpleApp.MixProject do
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      releases: [{@app, release()}]
+      releases: [{@app, release()}],
+      preferred_cli_env: [release: :prod]
     ]
   end
 
