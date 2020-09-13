@@ -47,6 +47,39 @@ Supported options:
   of current Mix project
 <!-- ASSEMBLE_TASK !-->
 
+### Scripting
+
+<!-- SCRIPT !-->
+Bakeware supports an API similar to Escript for implementing a `main` function.
+
+The `main` function will take 2 arguments:
+
+* `arg0` - The absolute path to the executable
+* `args` - Analogous to argv in other languages. A list or arguments passed to the
+  executable
+
+The `main` function must return a superset of functions that :erlang.halt/1 supports:
+
+* integer -> returning an integer will set the exit status. IE success: 0, error: >= 1
+* iodata -> An Erlang crash dump is produced with `iodata` as slogan. Then the runtime system exits with status code 1.
+  The string will be truncated if longer than 200 characters.
+* :abort -> The runtime system aborts producing a core dump, if that is enabled in the OS.
+
+Example:
+
+```elixir
+defmodule MyApp.Main do
+  use Bakeware.Script
+  
+  @impl Bakeware.Script
+  def main(_arg0, _args) do
+    IO.puts "Hello, World!"
+    0
+  end
+end
+```
+<!-- SCRIPT !-->
+
 ## Tips
 
 ### Minimizing executable size
@@ -99,6 +132,8 @@ Variable name                       | Description
 `BAKEWARE_ARG1`                     | The first commandline argument
 `BAKEWARE_ARGn`                     | The nth commandline argument
 `BAKEWARE_ARGC`                     | The number of arguments
+
+See the SCRIPT secion of this document for a more user friendly API.
 
 ### Binary format
 
