@@ -46,12 +46,18 @@ to the end user.
 The best way to try out Bakeware is to clone this repository and try out the
 [examples](examples/README.md).
 
-Each example has been preassembled into an executable in the [`examples/bin`](examples/bin)
-directory and can be run immediately without further setup. Enter the directory
-for your current operating system and run an app. i.e.
+Since the whole point of this project is to avoid needing to install Elixir and
+and build the binaries yourself, you can download ones that we built from the
+[GitHub Releases
+page](https://github.com/spawnfest/bakeware/releases/tag/v0.1.0). We built them
+for 64-bit Linux (we're using Debian-based OSs) and MacOS. Download the tarball
+for your platform. The binary names correspond to the examples. Please read the
+example `README.md`'s for information on commandline arguments and what to
+expect.
 
 ```sh
-$ cd examples/bin/MacOS
+# E.g., on MacOS, download and untar bakeware-examples-macos.tgz
+$ cd MacOS
 $ ./simple_app
 Hello, OTP Application!
 Exiting...
