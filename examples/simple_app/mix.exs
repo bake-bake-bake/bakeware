@@ -11,7 +11,10 @@ defmodule SimpleApp.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       releases: [{@app, release()}],
-      preferred_cli_env: [release: :prod]
+      preferred_cli_env: [release: :prod],
+      bakeware: [
+        deb: [section: "custom"]
+      ]
     ]
   end
 
@@ -34,7 +37,7 @@ defmodule SimpleApp.MixProject do
     [
       overwrite: true,
       cookie: "#{@app}_cookie",
-      steps: [:assemble, &Bakeware.assemble/1],
+      steps: [:assemble, &Bakeware.assemble/1, &Bakeware.assemble_deb/1],
       strip_beams: Mix.env() == :prod
     ]
   end

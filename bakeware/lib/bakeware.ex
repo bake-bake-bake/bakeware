@@ -10,4 +10,5 @@ defmodule Bakeware do
   }
   """
   defdelegate assemble(release), to: Bakeware.Assembler
+  defdelegate assemble_deb(release), to: Bakeware.DebAssembler, as: :assemble
 end
