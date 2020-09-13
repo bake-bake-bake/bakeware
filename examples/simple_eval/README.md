@@ -16,6 +16,9 @@ The executable is in the `_build/prod/rel/bakeware` directory. Here's what it
 should look like when you run it with no arguments:
 
 ```sh
-$ _build/prod/rel/bakeware/simple_eval "IO.puts(\"hello, world\")"
+$ _build/prod/rel/bakeware/simple_eval
+iex(simple_eval@localhost)1> IO.puts("hello, world")
 hello, world
+:ok
+iex(simple_eval@localhost)2>
 ```
