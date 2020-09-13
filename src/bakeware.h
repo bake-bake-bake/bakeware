@@ -52,7 +52,13 @@ struct bakeware_trailer
 int bw_read_trailer(int fd, struct bakeware_trailer *trailer);
 
 // CPIO
-int cpio_extract_all(int fd, size_t cpio_len, const char *dest_dir);
+typedef ssize_t (*read_contents)(int, void*, size_t);
+int cpio_extract_all(read_contents reader, int fd, const char *dest_dir);
+
+// zstd
+void unzstd_init(size_t max_bytes);
+void unzstd_free();
+ssize_t unzstd_read(int fd, void *buf, size_t count);
 
 // Cache management
 
@@ -71,6 +77,7 @@ struct bakeware
     struct bakeware_trailer trailer;
 
     int fd;
+    read_contents reader;
 
     bool print_info;
     bool run_gc;

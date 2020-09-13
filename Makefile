@@ -24,16 +24,38 @@ BUILD  = $(MIX_APP_PATH)/obj
 CFLAGS ?= -O2 -Wall -Wextra -Wno-unused-parameter -pedantic
 LDFLAGS ?=
 
-all: $(BUILD) $(PREFIX) $(PREFIX)/launcher
+BAKEWARE_OBJECTS = $(BUILD)/utils.o \
+	$(BUILD)/main.o \
+	$(BUILD)/trailer.o \
+	$(BUILD)/cpio.o \
+	$(BUILD)/unzstd.o \
+	$(BUILD)/cache.o
+
+ZSTD_OBJECTS = $(BUILD)/zstd/lib/decompress/huf_decompress.o \
+	$(BUILD)/zstd/lib/decompress/zstd_ddict.o \
+	$(BUILD)/zstd/lib/decompress/zstd_decompress.o \
+	$(BUILD)/zstd/lib/decompress/zstd_decompress_block.o \
+	$(BUILD)/zstd/lib/common/debug.o \
+	$(BUILD)/zstd/lib/common/entropy_common.o \
+	$(BUILD)/zstd/lib/common/error_private.o \
+	$(BUILD)/zstd/lib/common/fse_decompress.o \
+	$(BUILD)/zstd/lib/common/pool.o \
+	$(BUILD)/zstd/lib/common/threading.o \
+	$(BUILD)/zstd/lib/common/xxhash.o \
+	$(BUILD)/zstd/lib/common/zstd_common.o
+
+ZSTD_BUILD_DIRS = $(BUILD)/zstd/lib/decompress $(BUILD)/zstd/lib/common
+
+all: $(BUILD) $(PREFIX) $(ZSTD_BUILD_DIRS) $(PREFIX)/launcher
 
 $(BUILD)/%.o: src/%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-$(PREFIX)/launcher: $(BUILD)/utils.o $(BUILD)/main.o $(BUILD)/trailer.o $(BUILD)/cpio.o $(BUILD)/cache.o
+$(PREFIX)/launcher: $(BAKEWARE_OBJECTS) $(ZSTD_OBJECTS)
 	$(CC) $^ $(LDFLAGS) -o $@
 	strip $@
 
-$(PREFIX) $(BUILD):
+$(PREFIX) $(BUILD) $(ZSTD_BUILD_DIRS):
 	mkdir -p $@
 
 clean:
