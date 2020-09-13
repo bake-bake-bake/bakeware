@@ -2,10 +2,12 @@
 
 #include "bakeware.h"
 
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 void cache_init(struct bakeware *bw)
 {
@@ -29,19 +31,21 @@ static FILE *fopen_in_cache_dir(const struct bakeware *bw, const char *relpath, 
     return fp;
 }
 
+static bool file_exists_in_cache_dir(const struct bakeware *bw, const char *relpath)
+{
+    FILE *fp = fopen_in_cache_dir(bw, relpath, "r");
+    if (fp) {
+        fclose(fp);
+        return true;
+    } else {
+        return false;
+    }
+}
+
 static bool is_cache_valid(const struct bakeware *bw)
 {
-    FILE *fp = fopen_in_cache_dir(bw, "source_paths", "r");
-
-    bool is_valid = false;
-    if (fp) {
-        is_valid = true;
-        fclose(fp);
-    } else {
-        bw_warnx("<cachedir>/source_paths not found, so this is a first time extraction.");
-    }
-
-    return is_valid;
+    return file_exists_in_cache_dir(bw, "source_paths") &&
+        file_exists_in_cache_dir(bw, "start_script");
 }
 
 static bool has_source_path(const struct bakeware *bw)
@@ -85,20 +89,32 @@ int cache_validate(struct bakeware *bw)
         return 0;
     }
 
+    bw_warnx("Cache invalid. Extracting...");
+
     // Create the bakeware cache directory, but don't worry if this fails.
     (void) mkdir(bw->cache_dir_base, 0755);
 
-    if (mkdir(bw->cache_dir_app, 0755) < 0) {
+    if (mkdir(bw->cache_dir_app, 0755) < 0 && errno != EEXIST) {
         bw_warn("Can't create %s", bw->cache_dir_app);
         return -1;
     }
 
+    if (lseek(bw->fd, bw->trailer.contents_offset, SEEK_SET) < 0) {
+        bw_warn("Couldn't seek to start of CPIO");
+        return -1;
+    }
+    if (cpio_extract_all(bw->fd, bw->trailer.contents_length, bw->cache_dir_app) < 0) {
+        bw_warn("CPIO extraction failed.");
+        return -1;
+    }
+
     add_source_path(bw);
-    return -1;
+    return 0;
 }
 
 int cache_read_app_data(struct bakeware *bw)
 {
+    bw_warn("Implement me!");
     return -1;
 }
 
