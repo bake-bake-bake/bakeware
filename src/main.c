@@ -83,7 +83,7 @@ static void run_application()
 {
     update_environment(bw.argc, bw.argv);
     execl(bw.app_path, bw.app_path, "start", NULL);
-    bw_err(EXIT_FAILURE, "Failed to start application '%s'", bw.app_path);
+    bw_fatal("Failed to start application '%s'", bw.app_path);
 }
 
 int main(int argc, char *argv[])
@@ -94,11 +94,11 @@ int main(int argc, char *argv[])
 
     bw.fd = open(bw.path, O_RDONLY);
     if (bw.fd < 0)
-        bw_err(EXIT_FAILURE, "Can't open '%s'", bw.path);
+        bw_fatal("Can't open '%s'", bw.path);
 
     struct bakeware_trailer trailer;
     if (bw_read_trailer(bw.fd, &trailer) < 0)
-        bw_errx(EXIT_FAILURE, "Error reading trailer!");
+        bw_fatalx("Error reading trailer!");
 
     if (bw.print_info) {
         print_trailer_info(&bw.trailer);
@@ -106,17 +106,17 @@ int main(int argc, char *argv[])
     }
 
     if (bw.trailer.trailer_version != 1)
-        bw_errx(EXIT_FAILURE, "Expecting trailer version 1");
+        bw_fatalx("Expecting trailer version 1");
     if (bw.trailer.compression != BAKEWARE_COMPRESSION_NONE)
-        bw_errx(EXIT_FAILURE, "Don't know how to handle compression type %d", bw.trailer.compression);
+        bw_fatalx("Don't know how to handle compression type %d", bw.trailer.compression);
 
     cache_init(&bw);
 
     if (cache_validate(&bw) < 0)
-        bw_errx(EXIT_FAILURE, "Unrecoverable validation error");
+        bw_fatalx("Unrecoverable validation error");
 
     if (cache_read_app_data(&bw) < 0)
-        bw_errx(EXIT_FAILURE, "Unrecoverable application data error");
+        bw_fatalx("Unrecoverable application data error");
 
     close(bw.fd);
 
