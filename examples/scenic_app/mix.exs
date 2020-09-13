@@ -10,7 +10,8 @@ defmodule ScenicApp.MixProject do
       build_embedded: true,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      releases: [{@app, release()}]
+      releases: [{@app, release()}],
+      preferred_cli_env: [release: :prod]
     ]
   end
 
