@@ -3,8 +3,8 @@
 static ERL_NIF_TERM add(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 {
   int left, right;
-  
-  if(argc != 2 || 
+
+  if(argc != 2 ||
           !enif_get_int(env, argv[0], &left) ||
           !enif_get_int(env, argv[1], &right))
     return enif_make_badarg(env);
