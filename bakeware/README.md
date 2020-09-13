@@ -1,8 +1,34 @@
 # Bakeware
 
+Compile Elixir applications into single, easily distributed executable binaries
+
 ![The Bakeware oven](assets/bakeware_logo200.png)
 
-TBD
+Bakeware extends [Mix
+releases](https://hexdocs.pm/mix/1.10.4/Mix.Tasks.Release.html) with the ability
+to turn Elixir projects into single binaries that can be copied and directly
+run. No need to install Erlang or untar files. The binaries look and feel like
+the build-products from other languages.
+
+Here's a quick list of features:
+
+* Simple - add the `bakeware` dependency and the Bakeware assembler to your Mix
+  release settings
+* Supports OSX and Linux (We wrote the code with Windows and the BSDs in mind,
+  so support for those platforms may not be far off)
+* [Zstd compression](https://en.wikipedia.org/wiki/Zstandard) for small binaries
+* Optional support for automatic software updates
+* Commandline argument passing conveniences
+* Lots of examples
+
+This README contains the basics of making your applications work with `Bakeware`
+and reference material for when you need to dig into how it works.
+
+Since everything was written quickly and the integration is fairly
+straightforward, we recommend that you take a look at the examples. The examples
+are barebones Elixir scripts, OTP applications, Phoenix applications and more
+with small changes to their `mix.exs` files and instructions for running that
+you can try out for yourself.
 
 ## Using
 
@@ -70,7 +96,7 @@ Example:
 ```elixir
 defmodule MyApp.Main do
   use Bakeware.Script
-  
+
   @impl Bakeware.Script
   def main(_arg0, _args) do
     IO.puts "Hello, World!"
