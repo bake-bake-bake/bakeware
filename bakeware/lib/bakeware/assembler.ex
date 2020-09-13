@@ -48,7 +48,7 @@ defmodule Bakeware.Assembler do
 
   defp add_start_script(assembler) do
     start_path = Path.join(assembler.rel_path, "start")
-    start_script_path = "bin/simple_app"
+    start_script_path = "bin/#{assembler.name}"
 
     script = """
     #!/bin/sh
