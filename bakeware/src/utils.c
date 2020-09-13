@@ -16,7 +16,7 @@
 #include <unistd.h>
 #endif
 
-void bw_err(int status, const char *format, ...)
+void bw_fatal(const char *format, ...)
 {
     va_list ap;
     va_start(ap, format);
@@ -27,10 +27,10 @@ void bw_err(int status, const char *format, ...)
     fprintf(stderr, ": %s\n", strerror(err));
 
     va_end(ap);
-    exit(status);
+    exit(EXIT_FAILURE);
 }
 
-void bw_errx(int status, const char *format, ...)
+void bw_fatalx(const char *format, ...)
 {
     va_list ap;
     va_start(ap, format);
@@ -40,7 +40,7 @@ void bw_errx(int status, const char *format, ...)
     fprintf(stderr, "\n");
 
     va_end(ap);
-    exit(status);
+    exit(EXIT_FAILURE);
 }
 
 void bw_warn(const char *format, ...)
@@ -81,13 +81,13 @@ void bw_find_executable_path(char *path, size_t len)
 #elif __APPLE__
     uint32_t size = len;
     if (_NSGetExecutablePath(path, &size) != 0)
-        bw_errx(EXIT_FAILURE, "Couldn't determine executable path");
+        bw_fatalx("Couldn't determine executable path");
 #elif __linux
     if (readlink("/proc/self/exe", path, len) < 0)
-        bw_errx(EXIT_FAILURE, "Couldn't determine executable path");
+        bw_fatalx("Couldn't determine executable path");
 #elif __unix // Probably want BSDs...
     if (readlink("/proc/curproc/file", path, len) < 0)
-        bw_errx(EXIT_FAILURE, "Couldn't determine executable path");
+        bw_fatalx("Couldn't determine executable path");
 #elif __posix
 #error "POSIX unsupported"
 #else
@@ -124,7 +124,7 @@ int bw_set_environment(const char *key, int index, const char *value)
       len = asprintf(&str, "%s%d=%s", key, index, value);
 
     if (len < 0)
-        bw_err(EXIT_FAILURE, "asprintf");
+        bw_fatal("asprintf");
     return putenv(str);
 }
 
