@@ -133,7 +133,7 @@ Variable name                       | Description
 `BAKEWARE_ARGn`                     | The nth commandline argument
 `BAKEWARE_ARGC`                     | The number of arguments
 
-See the SCRIPT secion of this document for a more user friendly API.
+See the [Scripting](#scripting) secion of this document for a more user friendly API.
 
 ### Binary format
 
