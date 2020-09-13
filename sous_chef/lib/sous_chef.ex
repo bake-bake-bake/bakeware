@@ -12,8 +12,8 @@ defmodule SousChef do
 
   def executables(), do: Repo.all(Executable)
 
-  def find_executable(name) do
-    Repo.get_by(Executable, name: name) || {:error, :not_found}
+  def find_executable(name, type) do
+    Repo.get_by(Executable, name: name, type: type) || {:error, :not_found}
   end
 
   def update_executable(exec, attrs) do
