@@ -52,7 +52,7 @@ defmodule SousChefWeb.ExecutableController do
   end
 
   defp download_url(exec) do
-    "https://bakeware.s3.us-east-2.amazonaws.com/binaries/#{exec.name}-#{exec.version}-#{
+    "https://bakeware.s3.us-east-2.amazonaws.com/binaries/#{exec.name}-#{exec.active}-#{
       exec.type
     }"
   end

@@ -24,7 +24,7 @@ defmodule SousChefWeb.Router do
 
     resources "/executables", ExecutableController, param: "name"
 
-    get "/check/:name", ExecutableController, :check
+    get "/check/:name/:type", ExecutableController, :check
   end
 
   # Enables LiveDashboard only for development
