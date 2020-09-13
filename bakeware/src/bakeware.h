@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <sys/types.h>
 
 // Utility functions
 #ifdef __GNUC__
@@ -30,8 +31,6 @@ void bw_find_executable_path(char *path, size_t len);
 
 void bw_cache_directory(char *path, size_t len);
 int bw_set_environment(const char *key, int index, const char *value);
-
-
 
 // Trailer parsing
 struct bakeware_trailer
