@@ -6,18 +6,16 @@
 
 // Utility functions
 #ifdef __GNUC__
-#define BW_ERR_ATTRS __attribute__ ((__noreturn__, __format__ (__printf__, 2, 3)))
+#define BW_FATAL_ATTRS __attribute__ ((__noreturn__, __format__ (__printf__, 1, 2)))
 #define BW_WARN_ATTRS __attribute__ ((__format__ (__printf__, 1, 2)))
-#define BW_EXIT_ATTRS __attribute__ ((__noreturn__))
 #else
-#define BW_ERR_ATTRS
+#define BW_FATAL_ATTRS
 #define BW_WARN_ATTRS
-#define BW_EXIT_ATTRS
 #endif
 
 // err.h equivalents so this works on
-void bw_err(int status, const char *format, ...) BW_ERR_ATTRS;
-void bw_errx(int status, const char *format, ...) BW_ERR_ATTRS;
+void bw_fatal(const char *format, ...) BW_FATAL_ATTRS;
+void bw_fatalx(const char *format, ...) BW_FATAL_ATTRS;
 void bw_warn(const char *format, ...) BW_WARN_ATTRS;
 void bw_warnx(const char *format, ...) BW_WARN_ATTRS;
 
