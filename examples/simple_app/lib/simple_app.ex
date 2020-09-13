@@ -1,0 +1,2 @@
+defmodule SimpleApp do
+end
