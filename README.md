@@ -24,9 +24,9 @@ Here's a quick list of features:
 * Supports OSX and Linux (We wrote the code with Windows and the BSDs in mind,
   so support for those platforms may not be far off)
 * [Zstd compression](https://en.wikipedia.org/wiki/Zstandard) for small binaries
-* Optional support for automatic software updates
 * Commandline argument passing conveniences
 * Lots of examples
+* Stretch goal for SpawnFest: Optional support for automatic software updates
 
 Some stats:
 
@@ -72,6 +72,12 @@ Here's a list of the projects in this repository:
 
 * [`bakeware`](bakeware/README.md) - The main library
 * [`examples`](examples/README.md) - Examples
+
+The following projects were a stretch goal of ours. These projects are a client
+library and an example server for automatically updating binaries. The idea is
+that applications can ask a server if an update is available. If one is, it is
+downloaded and the application is automatically restarted with the new version.
+
 * [`bakeware_updater`](bakeware_updater/README.md) - Small Elixir library to check update server
   for an available update, download it, and apply it to the existing executable
 * [`sous_chef`](sous_chef/README.md) - An example update server for binaries built with Bakeware
