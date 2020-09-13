@@ -7,8 +7,7 @@ use Bakeware.
 
 ```sh
 export MIX_ENV=prod
-mix deps.get
-mix phx.digest
+mix setup
 mix release
 ```
 
