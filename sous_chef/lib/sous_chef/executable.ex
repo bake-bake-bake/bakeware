@@ -6,6 +6,7 @@ defmodule SousChef.Executable do
   schema "executables" do
     field :active, :string
     field :name, :string
+    field :type, :string
     field :versions, {:array, :string}, default: []
 
     timestamps()
@@ -13,7 +14,7 @@ defmodule SousChef.Executable do
 
   def changeset(exec \\ %__MODULE__{}, attrs) do
     exec
-    |> cast(attrs, [:active, :name, :versions])
+    |> cast(attrs, [:active, :name, :versions, :type])
     |> validate_required([:name])
     |> validate_change(:active, &validate_version/2)
     |> validate_change(:versions, &validate_versions/2)
