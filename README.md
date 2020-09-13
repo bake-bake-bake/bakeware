@@ -39,6 +39,16 @@ to the end user.
 The best way to try out Bakeware is to clone this repository and try out the
 [examples](examples/README.md).
 
+Each example has been preassembled into an executable in the [`examples/bin`](examples/bin)
+directory and can be run immediately without further setup. i.e.
+
+```sh
+$ cd examples
+$ ./bin/simple_app
+Hello, OTP Application!
+Exiting...
+```
+
 Documentation is provided in the main [`bakeware`](bakeware/README.md) library,
 the examples, and the [`SousCheck`](sous_chef/README.md) software update server.
 
@@ -51,4 +61,3 @@ Here's a list of the projects in this repository:
 * [`bakeware_updater`](bakeware_updater/README.md) - Small Elixir library to check update server
   for an available update, download it, and apply it to the existing executable
 * [`sous_chef`](sous_chef/README.md) - An example update server for binaries built with Bakeware
-
