@@ -1,0 +1,7 @@
+%{
+  "castore": {:hex, :castore, "0.1.7", "1ca19eee705cde48c9e809e37fdd0730510752cc397745e550f6065a56a701e9", [:mix], [], "hexpm", "a2ae2c13d40e9c308387f1aceb14786dca019ebc2a11484fb2a9f797ea0aa0d8"},
+  "elixir_make": {:hex, :elixir_make, "0.6.1", "8faa29a5597faba999aeeb72bbb9c91694ef8068f0131192fb199f98d32994ef", [:mix], [], "hexpm", "35d33270680f8d839a4003c3e9f43afb595310a592405a00afc12de4c7f55a18"},
+  "jason": {:hex, :jason, "1.2.2", "ba43e3f2709fd1aa1dce90aaabfd039d000469c05c56f0b8e31978e03fa39052", [:mix], [{:decimal, "~> 1.0 or ~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "18a228f5f0058ee183f29f9eae0805c6e59d61c3b006760668d8d18ff0d12179"},
+  "mint": {:hex, :mint, "1.1.0", "1fd0189edd9e3ffdbd7fcd8bc3835902b987a63ec6c4fd1aa8c2a56e2165f252", [:mix], [{:castore, "~> 0.1.0", [hex: :castore, repo: "hexpm", optional: true]}], "hexpm", "5bfd316c3789340b682d5679a8116bcf2112e332447bdc20c1d62909ee45f48d"},
+  "temp": {:hex, :temp, "0.4.7", "2c78482cc2294020a4bc0c95950b907ff386523367d4e63308a252feffbea9f2", [:mix], [], "hexpm", "6af19e7d6a85a427478be1021574d1ae2a1e1b90882586f06bde76c63cd03e0d"},
+}
