@@ -85,6 +85,9 @@ int cache_validate(struct bakeware *bw)
         return 0;
     }
 
+    // Create the bakeware cache directory, but don't worry if this fails.
+    (void) mkdir(bw->cache_dir_base, 0755);
+
     if (mkdir(bw->cache_dir_app, 0755) < 0) {
         bw_warn("Can't create %s", bw->cache_dir_app);
         return -1;

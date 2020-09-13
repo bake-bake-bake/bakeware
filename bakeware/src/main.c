@@ -96,8 +96,7 @@ int main(int argc, char *argv[])
     if (bw.fd < 0)
         bw_fatal("Can't open '%s'", bw.path);
 
-    struct bakeware_trailer trailer;
-    if (bw_read_trailer(bw.fd, &trailer) < 0)
+    if (bw_read_trailer(bw.fd, &bw.trailer) < 0)
         bw_fatalx("Error reading trailer!");
 
     if (bw.print_info) {
