@@ -8,4 +8,4 @@ binaries for various types of Elixir programs.
 * [`phoenix_app`](phoenix_app) - A small Phoenix application
 * [`scenic_app`](scenic_app) - A Scenic GUI demo application
 * [`nif_script`](nif_script) - escript-style Elixir script with a NIF
-
+* [`simple_eval`](simple_eval) - A simple code eval script
