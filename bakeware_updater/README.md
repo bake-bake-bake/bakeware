@@ -2,6 +2,9 @@
 
 Check for executable updates via SousChef API
 
+![screenshot0](assets/screenshot0.png)
+![screenshot1](assets/screenshot0.png)
+
 ## Usage
 
 ```elixir
