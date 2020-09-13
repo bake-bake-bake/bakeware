@@ -69,3 +69,9 @@ Here's a list of the projects in this repository:
 * [`bakeware_updater`](bakeware_updater/README.md) - Small Elixir library to check update server
   for an available update, download it, and apply it to the existing executable
 * [`sous_chef`](sous_chef/README.md) - An example update server for binaries built with Bakeware
+
+## LICENSE
+
+All code is licensed under Apache-2.0 with the exception of [`zstd`](bakeware/src/zstd)
+which is dual licensed BSD/GPL. See it's [LICENSE](bakeware/src/zstd/LICENSE) and
+[COPYING](bakeware/src/zstd/COPYING) files for more details.
