@@ -88,15 +88,18 @@ Bakeware binaries appear to have a lower bound of about 12 MB in size. We expect
 that they can be made smaller out-of-the-box, but here are a few things you can
 do:
 
-1. Build using `MIX_ENV=prod`. The default is `MIX_ENV=dev`, so be sure that the
+1. Make sure `zstd` is installed to enable compression during assembly:
+  * **MacOS**: `brew install zstd`
+  * **Ubuntu**: `apt-get install zstd`
+2. Build using `MIX_ENV=prod`. The default is `MIX_ENV=dev`, so be sure that the
    environment variable is set.
-2. Run `rm -fr _build` and then `mix release`. During development cruft builds
+3. Run `rm -fr _build` and then `mix release`. During development cruft builds
    up in the release directory. Bakeware can't tell the difference between the
    important files and the cruft, so executables will slowly grow in size if you
    don't do a clean build.
-3. Inspect your `_build/prod/rel/<name>` directory and especially under `lib`
+4. Inspect your `_build/prod/rel/<name>` directory and especially under `lib`
    for files or dependencies that you might be including on accident.
-4. Make sure that compile-time dependencies are marked as `runtime: false` in
+5. Make sure that compile-time dependencies are marked as `runtime: false` in
    your `mix.exs` so that they're not included
 
 ### Creating cross-platform binaries
