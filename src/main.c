@@ -81,8 +81,9 @@ static void init_bk(int argc, char *argv[])
 
 static void run_application()
 {
+    bw_warnx("Running %s...", bw.app_path);
     update_environment(bw.argc, bw.argv);
-    execl(bw.app_path, bw.app_path, "start", NULL);
+    execl(bw.app_path, bw.app_path, NULL);
     bw_fatal("Failed to start application '%s'", bw.app_path);
 }
 

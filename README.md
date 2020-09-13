@@ -68,7 +68,7 @@ Path                                | Created by | Description
 `$CACHE_DIR/$SHA256/erts-x.y.z`     | CPIO       | OTP release's ERTS
 `$CACHE_DIR/$SHA256/lib`            | CPIO       | OTP release's `lib` directory
 `$CACHE_DIR/$SHA256/releases`       | CPIO       | OTP release's `releases` directory
-`$CACHE_DIR/$SHA256/start_script`   | CPIO       | Path to start script. E.g., `bin/my_otp_release`
+`$CACHE_DIR/$SHA256/start`          | CPIO       | Start script. E.g., `bin/my_otp_release start`
 
 TODO: Add lock file to protect an executable being extracted on top of itself.
 This might actually work, though...
