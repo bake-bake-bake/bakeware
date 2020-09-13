@@ -2,19 +2,22 @@ defmodule SimpleScript do
   use Bakeware.Script
 
   @impl Bakeware.Script
-  def main(arg0, args) do
-    argc = length(args)
+  def main(args) do
+    args
+    |> parse_args()
+    |> response()
+    |> IO.puts()
+  end
 
-    args_print =
-      if argc > 0 do
-        for v <- 1..argc, do: "\narg#{v}=" <> Enum.at(args, v - 1)
-      end
+  defp parse_args(args) do
+    {opts, word, _} =
+      args
+      |> OptionParser.parse(switches: [upcase: :boolean])
 
-    IO.puts("""
-    argc=#{length(args)}
-    arg0=#{arg0}#{args_print}
-    """)
+    {opts, List.to_string(word)}
+  end
 
-    0
+  defp response({opts, word}) do
+    if opts[:upcase], do: String.upcase(word), else: word
   end
 end

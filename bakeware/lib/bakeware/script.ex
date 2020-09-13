@@ -11,10 +11,9 @@ defmodule Bakeware.Script do
   """
 
   @type args :: [String.t()]
-  @type bakeware_executable :: String.t()
 
-  @callback main(bakeware_executable, args) ::
-              non_neg_integer() | :abort | charlist() | String.t()
+  @callback main(args) ::
+              :ok | :error | non_neg_integer() | :abort | charlist() | String.t()
 
   @doc "Defines an app spec that will execute a `script`"
   defmacro __using__(_opts) do
@@ -33,7 +32,6 @@ defmodule Bakeware.Script do
 
       @doc false
       def _main() do
-        bakeware_executable = System.get_env("BAKEWARE_EXECUTABLE")
         {argc, ""} = Integer.parse(System.get_env("BAKEWARE_ARGC"))
 
         args =
@@ -43,22 +41,9 @@ defmodule Bakeware.Script do
             []
           end
 
-        case main(bakeware_executable, args) do
-          status when is_integer(status) and status >= 0 ->
-            :erlang.halt(status)
-
-          status when is_binary(status) ->
-            :erlang.halt(to_charlist(status))
-
-          status when is_list(status) ->
-            :erlang.halt(status)
-
-          :abort ->
-            :erlang.halt(:abort)
-
-          unknown ->
-            raise "Invalid return value from #{__MODULE__}.main/1: #{inspect(unknown)}"
-        end
+        main(args)
+        |> result_to_halt()
+        |> :erlang.halt()
       catch
         error, reason ->
           IO.warn(
@@ -68,6 +53,16 @@ defmodule Bakeware.Script do
 
           :erlang.halt(1)
       end
+
+      defp result_to_halt(:ok), do: 0
+      defp result_to_halt(:error), do: 1
+      defp result_to_halt(:abort), do: :abort
+      defp result_to_halt(status) when is_integer(status) and status >= 0, do: status
+      defp result_to_halt(status) when is_list(status), do: status
+      defp result_to_halt(status) when is_binary(status), do: to_charlist(status)
+
+      defp result_to_halt(unknown),
+        do: raise("Invalid return value from #{__MODULE__}.main/1: #{inspect(unknown)}")
     end
   end
 end
