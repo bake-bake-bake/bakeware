@@ -40,11 +40,12 @@ The best way to try out Bakeware is to clone this repository and try out the
 [examples](examples/README.md).
 
 Each example has been preassembled into an executable in the [`examples/bin`](examples/bin)
-directory and can be run immediately without further setup. i.e.
+directory and can be run immediately without further setup. Enter the directory
+for your current operating system and run an app. i.e.
 
 ```sh
-$ cd examples
-$ ./bin/simple_app
+$ cd examples/bin/MacOS
+$ ./simple_app
 Hello, OTP Application!
 Exiting...
 ```
