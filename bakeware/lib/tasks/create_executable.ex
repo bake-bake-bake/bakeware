@@ -12,6 +12,7 @@ defmodule Mix.Tasks.CreateExecutable do
 
         %{launcher: nil, cpio: "#{tmp_name}.cpio", trailer: "#{tmp_name}.trailer"}
         |> select_launcher(opts)
+        |> add_start_script(path)
         |> build_cpio(path)
         |> build_trailer()
         |> concat_files(output)
@@ -24,6 +25,25 @@ defmodule Mix.Tasks.CreateExecutable do
           }"
         )
     end
+  end
+
+  defp add_start_script(state, path) do
+    start_path = Path.join(path, "start") |> Path.expand()
+    start_script_path = "bin/simple_app"
+
+    script = """
+    #!/bin/sh
+    SELF=$(readlink "$0" || true)
+    if [ -z "$SELF" ]; then SELF="$0"; fi
+    ROOT="$(cd "$(dirname "$SELF")" && pwd -P)"
+
+    $ROOT/#{start_script_path} start
+    """
+
+    File.write!(start_path, script)
+    File.chmod!(start_path, 0o755)
+
+    state
   end
 
   defp build_cpio(state, path) do
@@ -45,13 +65,13 @@ defmodule Mix.Tasks.CreateExecutable do
   end
 
   defp cleanup_files(state) do
-    File.rm_rf!(state.cpio)
-    File.rm_rf!(state.trailer)
+    _ = File.rm_rf!(state.cpio)
+    _ = File.rm_rf!(state.trailer)
   end
 
   defp concat_files(state, output) do
     output = Path.expand(output)
-    :os.cmd('cat #{state.launcher} #{state.cpio} #{state.trailer} > #{output}')
+    _ = :os.cmd('cat #{state.launcher} #{state.cpio} #{state.trailer} > #{output}')
     File.chmod!(output, 0o755)
     IO.puts("#{IO.ANSI.green()}Created #{output}#{IO.ANSI.default_color()}")
     state
