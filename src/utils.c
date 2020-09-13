@@ -118,7 +118,7 @@ int bw_set_environment(const char *key, int index, const char *value)
 {
     char *str;
     int len;
-    if (index >= 0)
+    if (index < 0)
       len = asprintf(&str, "%s=%s", key, value);
     else
       len = asprintf(&str, "%s%d=%s", key, index, value);
