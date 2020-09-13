@@ -12,16 +12,20 @@ if [ "$OS" = "Darwin" ]; then
   OS="MacOS"
 fi;
 
+BIN_DIR=$EXAMPLES_DIR/bin/$OS
+
+mkdir -p $BIN_DIR
+
 for app in phoenix_app scenic_app simple_app simple_script
 do
-echo -e "*** Building $app bin ***"
+echo "*** Building $app bin ***"
 
 cd $EXAMPLES_DIR/$app
 rm -rf _build
-mix release
+MIX_ENV=prod mix do deps.get, release
 
-echo -e "*** copying $app bin to examples/bin/$OS ***"
-cp _build/prod/rel/bakeware/* $EXAMPLES_DIR/bin/$OS
+echo "*** copying $app bin to examples/bin/$OS ***\n"
+cp _build/prod/rel/bakeware/* $BIN_DIR
 
-echo -e "*** Finished $app ****\n"
+echo "*** Finished $app ****\n"
 done
