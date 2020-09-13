@@ -12,7 +12,8 @@ defmodule PhoenixApp.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      releases: [{@app, release()}]
+      releases: [{@app, release()}],
+      preferred_cli_env: [release: :prod]
     ]
   end
 
@@ -56,7 +57,9 @@ defmodule PhoenixApp.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get"]
+      assets: ["cmd npm run deploy --prefix assets"],
+      release: ["assets", "phx.digest", "release"],
+      setup: ["deps.get", "cmd npm install --prefix assets"]
     ]
   end
 
