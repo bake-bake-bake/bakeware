@@ -45,7 +45,7 @@ static bool file_exists_in_cache_dir(const struct bakeware *bw, const char *relp
 static bool is_cache_valid(const struct bakeware *bw)
 {
     return file_exists_in_cache_dir(bw, "source_paths") &&
-        file_exists_in_cache_dir(bw, "start_script");
+        file_exists_in_cache_dir(bw, "start");
 }
 
 static bool has_source_path(const struct bakeware *bw)
@@ -108,13 +108,20 @@ int cache_validate(struct bakeware *bw)
         return -1;
     }
 
+    if (!file_exists_in_cache_dir(bw, "start")) {
+        bw_warn("Missing `start` script in CPIO");
+        return -1;
+    }
+
+    // Adding the source path says that we think the extraction is successful
     add_source_path(bw);
     return 0;
 }
 
 int cache_read_app_data(struct bakeware *bw)
 {
-    bw_warn("Implement me!");
-    return -1;
+    snprintf(bw->app_path, sizeof(bw->app_path), "%s/%s/start", bw->cache_dir_base, bw->trailer.sha256_ascii);
+
+    return 0;
 }
 
