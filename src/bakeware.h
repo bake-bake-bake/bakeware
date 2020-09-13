@@ -13,11 +13,18 @@
 #define BW_WARN_ATTRS
 #endif
 
-// err.h equivalents so this works on
+// err.h equivalents so this works everywhere
 void bw_fatal(const char *format, ...) BW_FATAL_ATTRS;
 void bw_fatalx(const char *format, ...) BW_FATAL_ATTRS;
 void bw_warn(const char *format, ...) BW_WARN_ATTRS;
 void bw_warnx(const char *format, ...) BW_WARN_ATTRS;
+
+#define DEBUG
+#ifdef DEBUG
+#define bw_debug(...) do { bw_warnx(__VA_ARGS__); } while(0)
+#else
+#define bw_debug(...)
+#endif
 
 void bw_find_executable_path(char *path, size_t len);
 
@@ -75,7 +82,7 @@ struct bakeware
     char cache_dir_app[256 + 65];
 
     // Application invocation
-    char app_path[256];
+    char app_path[256 + 128];
 };
 
 #endif
