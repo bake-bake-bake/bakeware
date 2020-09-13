@@ -15,11 +15,11 @@ static unsigned int pad4(unsigned int x)
     return (x + 3) & ~3;
 }
 
-static int extract_file(int fd, const char *path, mode_t mode, size_t len)
+static int extract_file(int fd, const char *base_path, const char *path, mode_t mode, size_t len)
 {
-    // FIXME!!!!
     char output_path[1024];
-    mkdir("out", 0755);
+    snprintf(output_path, sizeof(output_path), "%s/%s", base_path, path);
+
     if (mode & 0040000) {
         // Ignore mode when creating directories
         if (mkdir(output_path, 0755) < 0 && errno != EEXIST) {
@@ -29,7 +29,7 @@ static int extract_file(int fd, const char *path, mode_t mode, size_t len)
     } else if (mode & 0100000) {
         FILE *dest = fopen(output_path, "wb");
         if (dest == NULL) {
-            bw_warn("Error opening %s??", output_path);
+            bw_warn("Error opening %s for write", output_path);
             return -1;
         }
 
@@ -57,7 +57,7 @@ static int extract_file(int fd, const char *path, mode_t mode, size_t len)
 // -1 is error
 // 0 is last entry
 // >0 is number of bytes processed
-static ssize_t cpio_extract_one(int fd, size_t max_len)
+static ssize_t cpio_extract_one(int fd, size_t max_len, const char *dest_dir)
 {
     char buffer[CPIO_HEADER_SIZE + 1];
 
@@ -107,12 +107,12 @@ static ssize_t cpio_extract_one(int fd, size_t max_len)
     if (memcmp(name, CPIO_LAST, sizeof(CPIO_LAST)) == 0)
        return 0;
 
-    if (extract_file(fd, name, mode, filesize) < 0)
+    if (extract_file(fd, dest_dir, name, mode, filesize) < 0)
         return -1;
 
     unsigned int padded_filesize = pad4(filesize);
     if (padded_filesize != filesize &&
-        lseek(fd, padded_filesize - filesize, SEEK_CUR) != 0) {
+        lseek(fd, padded_filesize - filesize, SEEK_CUR) < 0) {
         bw_warn("lseek failed");
         return -1;
     }
@@ -120,10 +120,10 @@ static ssize_t cpio_extract_one(int fd, size_t max_len)
     return CPIO_HEADER_SIZE + padded_name + padded_filesize;
 }
 
-int cpio_extract_all(int fd, size_t cpio_len)
+int cpio_extract_all(int fd, size_t cpio_len, const char *dest_dir)
 {
     for (;;) {
-        ssize_t len_processed = cpio_extract_one(fd, cpio_len);
+        ssize_t len_processed = cpio_extract_one(fd, cpio_len, dest_dir);
 
         // Success
         if (len_processed == 0)
