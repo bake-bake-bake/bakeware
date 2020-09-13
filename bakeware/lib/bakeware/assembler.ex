@@ -1,6 +1,6 @@
 defmodule Bakeware.Assembler do
   @moduledoc false
-  defstruct [:cpio, :launcher, :name, :output, :path, :release, :rel_path, :trailer]
+  defstruct [:compress?, :cpio, :launcher, :name, :output, :path, :release, :rel_path, :trailer]
 
   @doc false
   def assemble(%Mix.Release{} = release) do
@@ -39,6 +39,7 @@ defmodule Bakeware.Assembler do
 
     assembler
     |> create_paths()
+    |> set_compression()
     |> add_start_script()
     |> build_cpio()
     |> build_trailer()
@@ -66,9 +67,11 @@ defmodule Bakeware.Assembler do
   end
 
   defp build_cpio(assembler) do
+    maybe_zstd = if assembler.compress?, do: '| zstd -15 -'
+
     _ =
       :os.cmd(
-        'cd #{assembler.rel_path} && find . | cpio -o -H newc -v | zstd -15 - > #{assembler.cpio}'
+        'cd #{assembler.rel_path} && find . | cpio -o -H newc -v #{maybe_zstd} > #{assembler.cpio}'
       )
 
     assembler
@@ -80,7 +83,7 @@ defmodule Bakeware.Assembler do
     offset = File.stat!(assembler.launcher).size
     cpio_size = File.stat!(assembler.cpio).size
 
-    compression = 1
+    compression = if assembler.compress?, do: 1, else: 0
     trailer_version = 1
     flags = 0
 
@@ -113,5 +116,23 @@ defmodule Bakeware.Assembler do
 
     File.chmod!(assembler.output, 0o755)
     assembler
+  end
+
+  defp set_compression(assembler) do
+    compress? =
+      case System.find_executable("zstd") do
+        nil ->
+          # no compression
+          IO.puts("""
+          #{IO.ANSI.yellow()}* warning#{IO.ANSI.default_color()} [Bakeware] zstd not installed. Skipping compression...
+          """)
+
+          false
+
+        _path ->
+          true
+      end
+
+    %{assembler | compress?: compress?}
   end
 end
