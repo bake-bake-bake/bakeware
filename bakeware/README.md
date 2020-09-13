@@ -47,7 +47,38 @@ Supported options:
   of current Mix project
 <!-- ASSEMBLE_TASK !-->
 
-## Commandline arguments
+## Tips
+
+### Minimizing executable size
+
+Bakeware binaries appear to have a lower bound of about 12 MB in size. We expect
+that they can be made smaller out-of-the-box, but here are a few things you can
+do:
+
+1. Build using `MIX_ENV=prod`. The default is `MIX_ENV=dev`, so be sure that the
+   environment variable is set.
+2. Run `rm -fr _build` and then `mix release`. During development cruft builds
+   up in the release directory. Bakeware can't tell the difference between the
+   important files and the cruft, so executables will slowly grow in size if you
+   don't do a clean build.
+3. Inspect your `_build/prod/rel/<name>` directory and especially under `lib`
+   for files or dependencies that you might be including on accident.
+4. Make sure that compile-time dependencies are marked as `runtime: false` in
+   your `mix.exs` so that they're not included
+
+### Creating cross-platform binaries
+
+Bakeware binaries include the Erlang runtime but there are still dependencies on
+the host system. These include the C runtime and other libraries referenced by
+the Erlang runtime and any NIFs and ports in your application. Luckily, the
+binary ABIs of many libraries are very stable, but if distributing to a wide
+audience, it's useful to build on a system with older library versions. Python
+has a useful pointers in their [packaging
+guides](https://packaging.python.org/guides/packaging-binary-extensions/#building-binary-extensions).
+
+## Reference material
+
+### Commandline arguments
 
 In general, commandline arguments passed to Bakeware applications are passed through to Elixir. A few special commandline arguments can be passed to adjust the launchers behavior. Bakeware stops parsing commandline arguments when it encounters a `--`. Processed commandline arguments are not passed along to Elixir.
 
@@ -58,7 +89,7 @@ The following arguments may be passed:
 * `--bw-install` - Do not run the application. Stop after installing to the cache directory. (NOT IMPLEMENTED)
 * `--bw-system-install` - Install to a system-wide location (NOT IMPLEMENTED)
 
-## Environment variables
+### Environment variables
 
 The Bakeware launcher sets the following environment variables for use in Elixir:
 
@@ -69,7 +100,7 @@ Variable name                       | Description
 `BAKEWARE_ARGn`                     | The nth commandline argument
 `BAKEWARE_ARGC`                     | The number of arguments
 
-## Binary format
+### Binary format
 
 Bakeware application binaries look like this:
 
