@@ -43,9 +43,6 @@ defmodule Bakeware.Script do
             []
           end
 
-        IO.inspect(argc, label: "ARGC _main")
-        IO.inspect(args, label: "ARGV _main")
-
         case main(bakeware_executable, args) do
           status when is_integer(status) and status >= 0 ->
             :erlang.halt(status)
