@@ -89,7 +89,7 @@ int cache_validate(struct bakeware *bw)
         return 0;
     }
 
-    bw_warnx("Cache invalid. Extracting...");
+    bw_debug("Cache invalid. Extracting...");
 
     // Create the bakeware cache directory, but don't worry if this fails.
     (void) mkdir(bw->cache_dir_base, 0755);
