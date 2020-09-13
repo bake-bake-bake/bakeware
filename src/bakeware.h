@@ -46,7 +46,7 @@ struct bakeware_trailer
 int bw_read_trailer(int fd, struct bakeware_trailer *trailer);
 
 // CPIO
-int cpio_extract_all(int fd, size_t cpio_len);
+int cpio_extract_all(int fd, size_t cpio_len, const char *dest_dir);
 
 // Cache management
 

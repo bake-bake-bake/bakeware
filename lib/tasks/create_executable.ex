@@ -29,7 +29,7 @@ defmodule Mix.Tasks.CreateExecutable do
   defp build_cpio(state, path) do
     path = Path.expand(path)
     # Use MuonTrap for piping? ¬
-    :os.cmd('find #{path} | cpio -o -H newc -v > #{state.cpio}')
+    _ = :os.cmd('cd #{path} && find . | cpio -o -H newc -v > #{state.cpio}')
     state
   end
 
