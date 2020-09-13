@@ -5,7 +5,8 @@ defmodule BakewareUpdater.Application do
 
   def start(_type, _args) do
     children = [
-      BakewareUpdater
+      BakewareUpdater.RequestManager,
+      BakewareUpdater.AutoUpdater
     ]
 
     opts = [strategy: :one_for_one, name: BakewareUpdater.Supervisor]

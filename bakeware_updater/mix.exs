@@ -3,7 +3,7 @@ defmodule BakewareUpdater.MixProject do
 
   def project do
     [
-      app: :sous_chef_api,
+      app: :bakeware_updater,
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,

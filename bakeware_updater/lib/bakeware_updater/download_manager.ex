@@ -19,6 +19,7 @@ defmodule BakewareUpdater.DownloadManager do
   end
 
   def start(args) do
+    args = Keyword.put(args, :caller, self())
     GenServer.start(__MODULE__, args, name: __MODULE__)
   end
 
@@ -72,7 +73,7 @@ defmodule BakewareUpdater.DownloadManager do
   def terminate(_reason, state) do
     Logger.info("[DownloadManager] - Cleaning up Download files")
     _ = File.close(state.fd)
-    Temp.cleanup()
+    # Temp.cleanup()
   end
 
   defp calc_progress(val, size), do: round(val * 100 / size)
@@ -117,6 +118,8 @@ defmodule BakewareUpdater.DownloadManager do
   defp process_response({:done, ref}, %{request_ref: ref} = state) do
     Logger.info("[UpdateManager] - download complete")
     File.close(state.fd)
+
+    send state.caller, {__MODULE__, :complete, state.file_name}
     %{state | status: :download_complete}
   end
 end
