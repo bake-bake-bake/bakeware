@@ -99,11 +99,8 @@ defmodule Bakeware.Assembler do
     _ = File.rm_rf!(assembler.cpio)
     _ = File.rm_rf!(assembler.trailer)
 
-    IO.puts(
-      "Bakeware successfully assembled executable at #{
-        Path.relative_to(assembler.output, File.cwd!())
-      }"
-    )
+    IO.puts("Bakeware successfully assembled executable at\n")
+    IO.puts("    #{Path.relative_to(assembler.output, File.cwd!())}")
 
     assembler
   end
