@@ -210,3 +210,9 @@ Path                                | Created by | Description
 
 TODO: Add lock file to protect an executable being extracted on top of itself.
 This might actually work, though...
+
+## LICENSE
+
+All code is licensed under Apache-2.0 with the exception of [`zstd`](bakeware/src/zstd)
+which is dual licensed BSD/GPL. See it's [LICENSE](bakeware/src/zstd/LICENSE) and
+[COPYING](bakeware/src/zstd/COPYING) files for more details.
