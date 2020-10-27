@@ -1,5 +1,8 @@
 # Bakeware
 
+[![Hex version](https://img.shields.io/hexpm/v/bakeware.svg "Hex version")](https://hex.pm/packages/bakeware)
+[![CircleCI](https://circleci.com/gh/bake-bake-bake/bakeware.svg?style=svg)](https://circleci.com/gh/bake-bake-bake/bakeware)
+
 Compile Elixir applications into single, easily distributed executable binaries
 
 ![The Bakeware oven](assets/bakeware_logo200.png)
