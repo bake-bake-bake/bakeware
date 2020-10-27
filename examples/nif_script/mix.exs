@@ -28,7 +28,7 @@ defmodule NifScript.MixProject do
   defp deps do
     [
       {:elixir_make, "~> 0.6.1"},
-      {:bakeware, path: "../../bakeware", runtime: false}
+      {:bakeware, path: "../..", runtime: false}
     ]
   end
 

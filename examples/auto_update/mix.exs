@@ -25,7 +25,7 @@ defmodule AutoUpdate.MixProject do
 
   defp deps do
     [
-      {:bakeware, path: "../../bakeware", runtime: false},
+      {:bakeware, path: "../..", runtime: false},
       {:bakeware_updater, path: "../../bakeware_updater"}
     ]
   end

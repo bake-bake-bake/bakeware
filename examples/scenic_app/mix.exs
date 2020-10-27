@@ -28,7 +28,7 @@ defmodule ScenicApp.MixProject do
     [
       {:scenic, "~> 0.10"},
       {:scenic_driver_glfw, "~> 0.10", targets: :host},
-      {:bakeware, path: "../../bakeware", runtime: false}
+      {:bakeware, path: "../..", runtime: false}
     ]
   end
 
