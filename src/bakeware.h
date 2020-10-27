@@ -20,7 +20,7 @@ void bw_fatalx(const char *format, ...) BW_FATAL_ATTRS;
 void bw_warn(const char *format, ...) BW_WARN_ATTRS;
 void bw_warnx(const char *format, ...) BW_WARN_ATTRS;
 
-#define DEBUG
+// #define DEBUG
 #ifdef DEBUG
 #define bw_debug(...) do { bw_warnx(__VA_ARGS__); } while(0)
 #else
