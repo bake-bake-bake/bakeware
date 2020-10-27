@@ -1,0 +1,132 @@
+version: 2.1
+
+commands:
+  compile:
+    parameters:
+      working_directory:
+        type: "string"
+        default: "."
+    steps:
+      - checkout
+      - run:
+          name: Install system dependencies
+          command: |
+            apk update
+            apk add build-base
+      - run:
+          name: Install hex and rebar
+          command: |
+            mix local.hex --force
+            mix local.rebar --force
+      - restore_cache:
+          keys:
+            - v1-mix-cache-{{ checksum "<<parameters.working_directory>>/mix.lock" }}
+      - run:
+          command: mix deps.get
+          working_directory: <<parameters.working_directory>>
+      - run:
+          command: mix compile
+          working_directory: <<parameters.working_directory>>
+  put_cache:
+    parameters:
+      working_directory:
+        type: string
+        default: "."
+    steps:
+      - save_cache:
+          key: v1-mix-cache-{{ checksum "<<parameters.working_directory>>/mix.lock" }}
+          paths:
+            - <<parameters.working_directory>>/_build
+            - <<parameters.working_directory>>/deps
+
+executors:
+  hexpm:
+    parameters:
+      elixir:
+        type: string
+      erlang:
+        type: string
+    docker:
+      - image: hexpm/elixir:<< parameters.elixir >>-erlang-<< parameters.erlang >>-alpine-3.12.0
+    environment:
+      LC_ALL: C.UTF-8
+      SUDO: true
+    working_directory: ~/repo
+
+jobs:
+  build:
+    parameters:
+      elixir:
+        type: string
+      erlang:
+        type: string
+    executor:
+      name: hexpm
+      elixir: << parameters.elixir >>
+      erlang: << parameters.erlang >>
+    steps:
+      - compile
+      - run: mix format --check-formatted
+      - run: mix test
+      - run: mix docs
+      - run: mix hex.build
+      # - run: mix dialyzer
+      - put_cache
+
+  test_script:
+    parameters:
+      example:
+        type: string
+      args:
+        type: string
+        default: ""
+    executor:
+      name: hexpm
+      elixir: 1.11.1
+      erlang: 23.1.1
+    environment:
+      MIX_ENV: prod
+    steps:
+      - compile:
+          working_directory: examples/<< parameters.example >>
+      - run: mkdir ~/.cache
+      - run:
+          command: mix release
+          working_directory: examples/<< parameters.example >>
+      - run:
+          name: execute <<parameters.example>>
+          command: _build/prod/rel/bakeware/<<parameters.example>> <<parameters.args>>
+          no_output_timeout: 10s
+          working_directory: examples/<< parameters.example >>
+      - put_cache:
+          working_directory: examples/<< parameters.example >>
+
+workflows:
+  build_test:
+    jobs:
+      - build:
+          name: elixir-<<matrix.elixir>>-otp-<<matrix.erlang>>
+          matrix:
+            parameters:
+              elixir: [1.10.4, 1.11.1]
+              erlang: [23.1.1]
+
+      - test_script:
+          name: test simple_app
+          requires:
+            - elixir-1.11.1-otp-23.1.1
+          example: simple_app
+
+      # - test_script:
+      #     name: test simple_script
+      #     requires:
+      #       - elixir-1.11.1-otp-23.1.1
+      #     example: simple_script
+      #     args: howdy! --upcase
+
+      # - test_script:
+      #     name: test nif_script
+      #     requires:
+      #       - elixir-1.11.1-otp-23.1.1
+      #     example: nif_script
+      #     args: 2 2
