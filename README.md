@@ -17,7 +17,7 @@ Here's a quick list of features:
 * Supports OSX and Linux (We wrote the code with Windows and the BSDs in mind,
   so support for those platforms may not be far off)
 * [Zstd compression](https://en.wikipedia.org/wiki/Zstandard) for small binaries
-* Optional support for automatic software updates
+* Optional support for automatic software updates (work in progress)
 * Commandline argument passing conveniences
 * Lots of examples
 
