@@ -12,5 +12,5 @@ binaries for various types of Elixir programs.
 
 Binaries for OSX and Linux (64-bit) that we built on our computers can be found
 in the [GitHub
-releases](https://github.com/spawnfest/bakeware/releases/tag/v0.1.0) for this
+releases](https://github.com/bake-bake-bake/bakeware/releases/tag/v0.1.0) for this
 project.
