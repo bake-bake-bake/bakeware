@@ -2,6 +2,10 @@ defmodule SimpleScript do
   use Bakeware.Script
 
   @impl Bakeware.Script
+  def main([]) do
+    IO.puts("Pass me some arguments and I will upcase them if you specify --upcase")
+  end
+
   def main(args) do
     args
     |> parse_args()
