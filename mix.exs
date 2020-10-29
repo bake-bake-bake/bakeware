@@ -1,7 +1,7 @@
 defmodule Bakeware.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.1.1"
   @source_url "https://github.com/bake-bake-bake/bakeware"
 
   def project do
@@ -51,6 +51,7 @@ defmodule Bakeware.MixProject do
         "mix.exs",
         "Makefile",
         "README.md",
+        "CHANGELOG.md",
         "src/*.[ch]"
       ],
       licenses: ["Apache-2.0"],
