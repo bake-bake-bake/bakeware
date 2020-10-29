@@ -26,7 +26,7 @@ defmodule SimpleScript.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:bakeware, path: "../..", runtime: false}
+      {:bakeware, path: "../.."}
     ]
   end
 
