@@ -117,16 +117,16 @@ workflows:
             - elixir-1.11.1-otp-23.1.1
           example: simple_app
 
-      # - test_script:
-      #     name: test simple_script
-      #     requires:
-      #       - elixir-1.11.1-otp-23.1.1
-      #     example: simple_script
-      #     args: howdy! --upcase
+      - test_script:
+          name: test simple_script
+          requires:
+            - elixir-1.11.1-otp-23.1.1
+          example: simple_script
+          args: howdy! --upcase
 
-      # - test_script:
-      #     name: test nif_script
-      #     requires:
-      #       - elixir-1.11.1-otp-23.1.1
-      #     example: nif_script
-      #     args: 2 2
+      - test_script:
+          name: test nif_script
+          requires:
+            - elixir-1.11.1-otp-23.1.1
+          example: nif_script
+          args: 2 2
