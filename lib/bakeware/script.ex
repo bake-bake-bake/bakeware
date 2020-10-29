@@ -32,58 +32,37 @@ defmodule Bakeware.Script do
 
       @doc false
       def _main() do
-        (&main/1)
-        |> Bakeware.Script._main()
+        {argc, ""} = Integer.parse(System.get_env("BAKEWARE_ARGC"))
+
+        args =
+          if argc > 0 do
+            for v <- 1..argc, do: System.get_env("BAKEWARE_ARG#{v}")
+          else
+            []
+          end
+
+        main(args)
+        |> result_to_halt()
         |> :erlang.halt()
-      end
-    end
-  end
+      catch
+        error, reason ->
+          IO.warn(
+            "Caught exception in main/1: #{inspect(error)} => #{inspect(reason, pretty: true)}",
+            __STACKTRACE__
+          )
 
-  @doc false
-  @spec _main(main_fn :: fun()) :: no_return
-  def _main(main_fn) do
-    argc = get_argc!()
-
-    args =
-      if argc > 0 do
-        for v <- 1..argc, do: System.get_env("BAKEWARE_ARG#{v}")
-      else
-        []
+          :erlang.halt(1)
       end
 
-    args
-    |> main_fn.()
-    |> result_to_halt()
-  catch
-    error, reason ->
-      IO.warn(
-        "Caught exception in main/1: #{inspect(error)} => #{inspect(reason, pretty: true)}",
-        __STACKTRACE__
-      )
+      defp result_to_halt(:ok), do: 0
+      defp result_to_halt(:error), do: 1
+      defp result_to_halt(:abort), do: :abort
+      defp result_to_halt(status) when is_integer(status) and status >= 0, do: status
+      defp result_to_halt(status) when is_list(status), do: status
+      defp result_to_halt(status) when is_binary(status), do: to_charlist(status)
 
-      :erlang.halt(1)
-  end
-
-  defp get_argc! do
-    "BAKEWARE_ARGC"
-    |> System.get_env("0")
-    |> Integer.parse()
-    |> case do
-      {argc, ""} ->
-        argc
-
-      _ ->
-        raise("Invalid BAKEWARE_ARGC environment variable set.")
+      defp result_to_halt(unknown),
+        do: raise("Invalid return value from #{__MODULE__}.main/1: #{inspect(unknown)}")
     end
   end
-
-  defp result_to_halt(:ok), do: 0
-  defp result_to_halt(:error), do: 1
-  defp result_to_halt(:abort), do: :abort
-  defp result_to_halt(status) when is_integer(status) and status >= 0, do: status
-  defp result_to_halt(status) when is_list(status), do: status
-  defp result_to_halt(status) when is_binary(status), do: to_charlist(status)
-
-  defp result_to_halt(unknown),
-    do: raise("Invalid return value from #{__MODULE__}.main/1: #{inspect(unknown)}")
 end
