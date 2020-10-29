@@ -19,6 +19,7 @@ defmodule Bakeware.Script do
   defmacro __using__(_opts) do
     quote location: :keep do
       @behaviour Bakeware.Script
+
       use Application
 
       def start(_type, _args) do
@@ -32,36 +33,51 @@ defmodule Bakeware.Script do
 
       @doc false
       def _main() do
-        {argc, ""} = Integer.parse(System.get_env("BAKEWARE_ARGC"))
-
-        args =
-          if argc > 0 do
-            for v <- 1..argc, do: System.get_env("BAKEWARE_ARG#{v}")
-          else
-            []
-          end
-
-        main(args)
+        get_argc!()
+        |> get_args
+        |> main()
         |> result_to_halt()
         |> :erlang.halt()
       catch
         error, reason ->
           IO.warn(
-            "Caught exception in main/1: #{inspect(error)} => #{inspect(reason, pretty: true)}",
+            "Caught exception in #{__MODULE__}.main/1: #{inspect(error)} => #{
+              inspect(reason, pretty: true)
+            }",
             __STACKTRACE__
           )
 
-          :erlang.halt(1)
+          :erlang.halt(:error)
       end
 
-      defp result_to_halt(:ok), do: 0
-      defp result_to_halt(:error), do: 1
-      defp result_to_halt(:abort), do: :abort
-      defp result_to_halt(status) when is_integer(status) and status >= 0, do: status
-      defp result_to_halt(status) when is_list(status), do: status
-      defp result_to_halt(status) when is_binary(status), do: to_charlist(status)
+      @doc false
+      def get_argc!() do
+        argc_str = System.get_env("BAKEWARE_ARGC", "0")
 
-      defp result_to_halt(unknown),
+        case Integer.parse(argc_str) do
+          {argc, ""} -> argc
+          _ -> raise "Invalid BAKEWARE_ARGC - #{argc_str}"
+        end
+      end
+
+      @doc false
+      def get_args(argc) do
+        if argc > 0 do
+          for i <- 1..argc, do: System.get_env("BAKEWARE_ARG#{i}")
+        else
+          []
+        end
+      end
+
+      @doc false
+      def result_to_halt(:ok), do: 0
+      def result_to_halt(:error), do: 1
+      def result_to_halt(:abort), do: :abort
+      def result_to_halt(status) when is_integer(status) and status >= 0, do: status
+      def result_to_halt(status) when is_list(status), do: status
+      def result_to_halt(status) when is_binary(status), do: to_charlist(status)
+
+      def result_to_halt(unknown),
         do: raise("Invalid return value from #{__MODULE__}.main/1: #{inspect(unknown)}")
     end
   end
