@@ -7,6 +7,12 @@ Compile Elixir applications into single, easily distributed executable binaries
 
 ![The Bakeware oven](assets/bakeware_logo200.png)
 
+> Bakeware was made over a weekend at [SpawnFest 2020](https://spawnfest.github.io/)
+> and thanks to the response from the community, we're working on finishing it
+> off. While it's not ready for production, it's definitely ready for
+> experimentation - just expect APIs to change in the near-term. If you'd like
+> to help, please let us know and stay tuned!
+
 Bakeware extends [Mix
 releases](https://hexdocs.pm/mix/1.10.4/Mix.Tasks.Release.html) with the ability
 to turn Elixir projects into single binaries that can be copied and directly
