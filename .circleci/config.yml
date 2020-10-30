@@ -1,11 +1,46 @@
 version: 2.1
 
 commands:
+  background_execute:
+    parameters:
+      example:
+        type: string
+    steps:
+      - run:
+          name: background execute <<parameters.example>>
+          command: _build/prod/rel/bakeware/<<parameters.example>> > /tmp/output
+          background: true
+          working_directory: examples/<<parameters.example>>
+  
+  execute_example:
+    parameters:
+      example:
+        type: string
+      commands:
+        type: steps
+      env_setup:
+        type: steps
+        default: []
+    steps:
+      - compile:
+          working_directory: examples/<< parameters.example >>
+          env_setup: << parameters.env_setup >>
+      - run: mkdir ~/.cache
+      - run:
+          command: mix release
+          working_directory: examples/<< parameters.example >>
+      - steps: << parameters.commands >>
+      - put_cache:
+          working_directory: examples/<< parameters.example >>
+
   compile:
     parameters:
       working_directory:
         type: "string"
         default: "."
+      env_setup:
+        type: steps
+        default: []
     steps:
       - checkout
       - run:
@@ -21,12 +56,14 @@ commands:
       - restore_cache:
           keys:
             - v1-mix-cache-{{ checksum "<<parameters.working_directory>>/mix.lock" }}
+      - steps: << parameters.env_setup >>
       - run:
           command: mix deps.get
           working_directory: <<parameters.working_directory>>
       - run:
           command: mix compile
           working_directory: <<parameters.working_directory>>
+
   put_cache:
     parameters:
       working_directory:
@@ -38,6 +75,20 @@ commands:
           paths:
             - <<parameters.working_directory>>/_build
             - <<parameters.working_directory>>/deps
+  
+  validate_output:
+    parameters:
+      example:
+        type: string
+      grep:
+        type: string
+    steps:
+      - run:
+          name: validate <<parameters.example>> output
+          command: |
+            check_script() { local e t=0; until grep "<<parameters.grep>>" /tmp/output; do e=$?; $((t++ > 8)) && return $e; sleep $t; done; }
+            check_script
+          no_output_timeout: 10s
 
 executors:
   hexpm:
@@ -52,6 +103,18 @@ executors:
       LC_ALL: C.UTF-8
       SUDO: true
     working_directory: ~/repo
+
+example_env: &example_env
+  executor:
+    name: hexpm
+    elixir: 1.11.1
+    erlang: 23.1.1
+  environment:
+    MIX_ENV: prod
+
+example_requires: &example_requires
+  requires:
+    - elixir-1.11.1-otp-23.1.1
 
 jobs:
   build:
@@ -80,26 +143,66 @@ jobs:
       args:
         type: string
         default: ""
-    executor:
-      name: hexpm
-      elixir: 1.11.1
-      erlang: 23.1.1
-    environment:
-      MIX_ENV: prod
+    <<: *example_env
     steps:
-      - compile:
-          working_directory: examples/<< parameters.example >>
-      - run: mkdir ~/.cache
-      - run:
-          command: mix release
-          working_directory: examples/<< parameters.example >>
-      - run:
-          name: execute <<parameters.example>>
-          command: _build/prod/rel/bakeware/<<parameters.example>> <<parameters.args>>
-          no_output_timeout: 10s
-          working_directory: examples/<< parameters.example >>
-      - put_cache:
-          working_directory: examples/<< parameters.example >>
+      - execute_example:
+          example: << parameters.example >>
+          commands:
+            - run:
+                name: execute <<parameters.example>>
+                command: _build/prod/rel/bakeware/<<parameters.example>> <<parameters.args>>
+                no_output_timeout: 10s
+                working_directory: examples/<< parameters.example >>
+
+  test_iex:
+    <<: *example_env
+    steps:
+      - execute_example:
+          example: iex_prompt
+          commands:
+            - background_execute:
+                example: iex_prompt
+            - validate_output:
+                example: iex_prompt
+                grep: Interactive Elixir
+  
+  test_scenic:
+    <<: *example_env
+    steps:
+      - execute_example:
+          example: scenic_app
+          env_setup:
+            - run:
+                name: Install glfw
+                command: apk add glew-dev glew glfw glfw-dev pkgconfig
+          commands:
+            - background_execute:
+                example: scenic_app
+            - validate_output:
+                example: scenic_app
+                grep: Starting ScenicApp
+  
+  test_phoenix:
+    <<: *example_env
+    steps:
+      - execute_example:
+          example: phoenix_app
+          env_setup:
+            - run:
+                name: Install node
+                command: apk add nodejs nodejs-npm
+            - run: 
+                command: mix setup
+                working_directory: examples/phoenix_app
+            - run:
+                command: mix assets
+                working_directory: examples/phoenix_app
+          commands:
+            - background_execute:
+                example: phoenix_app
+            - validate_output:
+                example: phoenix_app
+                grep: Running PhoenixAppWeb.Endpoint
 
 workflows:
   build_test:
@@ -112,21 +215,30 @@ workflows:
               erlang: [23.1.1]
 
       - test_script:
+          <<: *example_requires
           name: test simple_app
-          requires:
-            - elixir-1.11.1-otp-23.1.1
           example: simple_app
 
       - test_script:
+          <<: *example_requires
           name: test simple_script
-          requires:
-            - elixir-1.11.1-otp-23.1.1
           example: simple_script
           args: howdy! --upcase
 
       - test_script:
+          <<: *example_requires
           name: test nif_script
-          requires:
-            - elixir-1.11.1-otp-23.1.1
           example: nif_script
           args: 2 2
+
+      - test_iex:
+          <<: *example_requires
+          name: test iex_prompt
+
+      - test_scenic:
+          <<: *example_requires
+          name: test scenic_app
+
+      - test_phoenix:
+          <<: *example_requires
+          name: test phoenix_app
