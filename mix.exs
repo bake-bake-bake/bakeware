@@ -58,7 +58,8 @@ defmodule Bakeware.MixProject do
       licenses: ["Apache-2.0"],
       links: %{
         "Changelog" => "#{@source_url}/blob/main/CHANGELOG.md",
-        "GitHub" => @source_url}
+        "GitHub" => @source_url
+      }
     }
   end
 
