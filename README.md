@@ -31,7 +31,7 @@ Here's a quick list of features:
   so support for those platforms may not be far off)
 * [Zstd compression](https://en.wikipedia.org/wiki/Zstandard) for small binaries
 * Optional support for automatic software updates (work in progress)
-* Command line argument passing conveniences
+* Command-line argument passing conveniences
 * Lots of examples
 
 This README contains the basics of making your applications work with `Bakeware`
@@ -153,9 +153,9 @@ guides](https://packaging.python.org/guides/packaging-binary-extensions/#buildin
 
 ## Reference material
 
-### Command line arguments
+### Command-line arguments
 
-In general, command line arguments passed to Bakeware applications are passed through to Elixir. A few special command line arguments can be passed to adjust the launchers behavior. Bakeware stops parsing command line arguments when it encounters a `--`. Processed command line arguments are not passed along to Elixir.
+In general, command-line arguments passed to Bakeware applications are passed through to Elixir. A few special command-line arguments can be passed to adjust the launchers behavior. Bakeware stops parsing command-line arguments when it encounters a `--`. Processed command-line arguments are not passed along to Elixir.
 
 The following arguments may be passed:
 
@@ -171,8 +171,8 @@ The Bakeware launcher sets the following environment variables for use in Elixir
 Variable name                       | Description
  ---------------------------------- | --------------------------
 `BAKEWARE_EXECUTABLE`               | The absolute path to the executable
-`BAKEWARE_ARG1`                     | The first command line argument
-`BAKEWARE_ARGn`                     | The nth command line argument
+`BAKEWARE_ARG1`                     | The first command-line argument
+`BAKEWARE_ARGn`                     | The nth command-line argument
 `BAKEWARE_ARGC`                     | The number of arguments
 
 See the [Scripting](#scripting) section of this document for a more user friendly API.

@@ -1,6 +1,6 @@
 defmodule Bakeware.Script do
   @moduledoc """
-  Helper to generate a script that takes command line arguments
+  Helper to generate a script that takes command-line arguments
 
   #{
     File.read!("README.md")
