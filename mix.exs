@@ -52,19 +52,23 @@ defmodule Bakeware.MixProject do
         "Makefile",
         "README.md",
         "CHANGELOG.md",
+        "LICENSE",
         "src/*.[ch]"
       ],
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => @source_url}
+      links: %{
+        "Changelog" => "#{@source_url}/blob/main/CHANGELOG.md",
+        "GitHub" => @source_url}
     }
   end
 
   defp docs do
     [
-      extras: ["README.md"],
+      extras: ["README.md", "CHANGELOG.md"],
       main: "readme",
       source_ref: "v#{@version}",
-      source_url: @source_url
+      source_url: @source_url,
+      logo: "assets/logo.png"
     ]
   end
 end
