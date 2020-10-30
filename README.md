@@ -1,11 +1,15 @@
 # Bakeware
 
-[![Hex version](https://img.shields.io/hexpm/v/bakeware.svg "Hex version")](https://hex.pm/packages/bakeware)
 [![CircleCI](https://circleci.com/gh/bake-bake-bake/bakeware.svg?style=svg)](https://circleci.com/gh/bake-bake-bake/bakeware)
+[![Hex version](https://img.shields.io/hexpm/v/bakeware.svg "Hex version")](https://hex.pm/packages/bakeware)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/bakeware/)
+[![Total Download](https://img.shields.io/hexpm/dt/bakeware.svg)](https://hex.pm/packages/bakeware)
+[![License](https://img.shields.io/hexpm/l/bakeware.svg)](https://hex.pm/packages/bakeware)
+[![Last updated](https://img.shields.io/github/last-commit/bake-bake-bake/bakeware.svg)](https://github.com/bake-bake-bake/bakeware/commits/master)
 
 Compile Elixir applications into single, easily distributed executable binaries
 
-![The Bakeware oven](assets/bakeware_logo200.png)
+![The Bakeware oven](https://raw.githubusercontent.com/bake-bake-bake/bakeware/main/assets/bakeware_logo200.png)
 
 > Bakeware was made over a weekend at [SpawnFest 2020](https://spawnfest.github.io/)
 > and thanks to the response from the community, we're working on finishing it
@@ -27,7 +31,7 @@ Here's a quick list of features:
   so support for those platforms may not be far off)
 * [Zstd compression](https://en.wikipedia.org/wiki/Zstandard) for small binaries
 * Optional support for automatic software updates (work in progress)
-* Commandline argument passing conveniences
+* Command line argument passing conveniences
 * Lots of examples
 
 This README contains the basics of making your applications work with `Bakeware`
@@ -35,7 +39,7 @@ and reference material for when you need to dig into how it works.
 
 Since everything was written quickly and the integration is fairly
 straightforward, we recommend that you take a look at the examples. The examples
-are barebones Elixir scripts, OTP applications, Phoenix applications and more
+are bare bones Elixir scripts, OTP applications, Phoenix applications and more
 with small changes to their `mix.exs` files and instructions for running that
 you can try out for yourself.
 
@@ -72,7 +76,7 @@ Bakeware also supports manually assembling the executable via `mix bakeware.asse
 Generally, it is expected that you integrate assembly as a Mix release
 step (see `Bakeware.assemble/1`)
 
-However, this task provides the ability to manually assemble the bakeware executable
+However, this task provides the ability to manually assemble the Bakeware executable
 binary either for the current project, or for other specified release directories.
 
 Supported options:
@@ -149,9 +153,9 @@ guides](https://packaging.python.org/guides/packaging-binary-extensions/#buildin
 
 ## Reference material
 
-### Commandline arguments
+### Command line arguments
 
-In general, commandline arguments passed to Bakeware applications are passed through to Elixir. A few special commandline arguments can be passed to adjust the launchers behavior. Bakeware stops parsing commandline arguments when it encounters a `--`. Processed commandline arguments are not passed along to Elixir.
+In general, command line arguments passed to Bakeware applications are passed through to Elixir. A few special command line arguments can be passed to adjust the launchers behavior. Bakeware stops parsing command line arguments when it encounters a `--`. Processed command line arguments are not passed along to Elixir.
 
 The following arguments may be passed:
 
@@ -167,11 +171,11 @@ The Bakeware launcher sets the following environment variables for use in Elixir
 Variable name                       | Description
  ---------------------------------- | --------------------------
 `BAKEWARE_EXECUTABLE`               | The absolute path to the executable
-`BAKEWARE_ARG1`                     | The first commandline argument
-`BAKEWARE_ARGn`                     | The nth commandline argument
+`BAKEWARE_ARG1`                     | The first command line argument
+`BAKEWARE_ARGn`                     | The nth command line argument
 `BAKEWARE_ARGC`                     | The number of arguments
 
-See the [Scripting](#scripting) secion of this document for a more user friendly API.
+See the [Scripting](#scripting) section of this document for a more user friendly API.
 
 ### Binary format
 
@@ -203,7 +207,7 @@ OTP releases and it enables start-time optimizations.
 The cache directory location is system-specific:
 
 * Windows - `"C:/Users/<USER>/AppData/Local/Bakeware/cache"`
-* macOS - `"~/Library/Caches/Bakeware"`
+* MacOS - `"~/Library/Caches/Bakeware"`
 * Linux and other Unixes - `"~/.cache/bakeware"`
 
 Here's the layout of each cache entry:
@@ -222,6 +226,4 @@ This might actually work, though...
 
 ## LICENSE
 
-All code is licensed under Apache-2.0 with the exception of [`zstd`](bakeware/src/zstd)
-which is dual licensed BSD/GPL. See it's [LICENSE](bakeware/src/zstd/LICENSE) and
-[COPYING](bakeware/src/zstd/COPYING) files for more details.
+All code is licensed under Apache-2.0 with the exception of [`zstd`](https://github.com/bake-bake-bake/bakeware/tree/main/src/zstd) which is dual licensed BSD/GPL. See it's [LICENSE](https://github.com/bake-bake-bake/bakeware/blob/main/src/zstd/LICENSE) and [COPYING](https://github.com/bake-bake-bake/bakeware/blob/main/src/zstd/COPYING) files for more details.
