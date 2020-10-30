@@ -5,7 +5,7 @@
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/bakeware/)
 [![Total Download](https://img.shields.io/hexpm/dt/bakeware.svg)](https://hex.pm/packages/bakeware)
 [![License](https://img.shields.io/hexpm/l/bakeware.svg)](https://hex.pm/packages/bakeware)
-[![Last updated](https://img.shields.io/github/last-commit/bake-bake-bake/bakeware.svg)](https://github.com/bake-bake-bake/bakeware/commits/master)
+[![Last updated](https://img.shields.io/github/last-commit/bake-bake-bake/bakeware.svg)](https://github.com/bake-bake-bake/bakeware/commits/main)
 
 Compile Elixir applications into single, easily distributed executable binaries
 
