@@ -4,6 +4,8 @@ defmodule ScenicApp do
   """
 
   def start(_type, _args) do
+    IO.puts("Starting ScenicApp")
+
     # load the viewport configuration from config
     main_viewport_config = Application.get_env(:scenic_app, :viewport)
 
