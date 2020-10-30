@@ -26,7 +26,7 @@ defmodule Bakeware.Assembler do
       assembler
       | path: bake_path,
         cpio: Path.join(bake_path, "#{tmp_name}.cpio"),
-        launcher: Path.join(:code.priv_dir(:bakeware), "launcher"),
+        launcher: Application.app_dir(:bakeware, ["launcher", "launcher"]),
         output: Path.join(bake_path, "#{assembler.name}"),
         trailer: Path.join(bake_path, "#{tmp_name}.trailer")
     }
