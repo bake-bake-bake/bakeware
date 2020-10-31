@@ -89,34 +89,41 @@ Supported options:
 ### Scripting
 
 <!-- SCRIPT !-->
-Bakeware supports an API similar to Escript for implementing a `main` function.
-
-The `main` function will take 2 arguments:
-
-* `arg0` - The absolute path to the executable
-* `args` - Analogous to argv in other languages. A list or arguments passed to the
-  executable
-
-The `main` function must return a superset of functions that :erlang.halt/1 supports:
-
-* integer -> returning an integer will set the exit status. IE success: 0, error: >= 1
-* iodata -> An Erlang crash dump is produced with `iodata` as slogan. Then the runtime system exits with status code 1.
-  The string will be truncated if longer than 200 characters.
-* :abort -> The runtime system aborts producing a core dump, if that is enabled in the OS.
-
-Example:
+Bakeware supports an API similar to Erlang's escript for implementing a `main`
+function. Here's an example "main" module:
 
 ```elixir
 defmodule MyApp.Main do
   use Bakeware.Script
 
   @impl Bakeware.Script
-  def main(_arg0, _args) do
+  def main(_args) do
     IO.puts "Hello, World!"
     0
   end
 end
 ```
+
+The return value sets the scripts exit status (0 for success and other values
+for errors). Other value types are supported. See
+[`:erlang.halt/2](https://erlang.org/doc/man/erlang.html#halt-2) for how these
+work.
+
+Next, add this module to your `mix.exs`'s application description. This usually
+looks something like this:
+
+```elixir
+  def application do
+    [
+      extra_applications: [:logger],
+      mod: {Myapp.Main, []}
+    ]
+  end
+```
+
+Why does the module get added to `:mod`? Everything with Bakeware operates on
+OTP Releases. The macros in `Bakeware.Script` add the scaffolding to invoke your
+`main/1` function from the release.
 <!-- SCRIPT !-->
 
 ## Tips
