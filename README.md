@@ -90,7 +90,7 @@ Supported options:
 
 <!-- SCRIPT !-->
 Bakeware supports an API similar to Erlang's escript for implementing a `main`
-function. Here's an example "main" module:
+function. Here's an example module:
 
 ```elixir
 defmodule MyApp.Main do
@@ -106,7 +106,7 @@ end
 
 The return value sets the scripts exit status (0 for success and other values
 for errors). Other value types are supported. See
-[`:erlang.halt/2](https://erlang.org/doc/man/erlang.html#halt-2) for how these
+[`:erlang.halt/2`](https://erlang.org/doc/man/erlang.html#halt-2) for how these
 work.
 
 Next, add this module to your `mix.exs`'s application description. This usually
