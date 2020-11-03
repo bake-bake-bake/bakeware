@@ -53,7 +53,8 @@ defmodule Bakeware.MixProject do
         "README.md",
         "CHANGELOG.md",
         "LICENSE",
-        "src/*.[ch]"
+        "src/*.[ch]",
+        "src/zstd"
       ],
       licenses: ["Apache-2.0"],
       links: %{
