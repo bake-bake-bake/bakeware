@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.3
+
+Bug fixes:
+
+* Fix hex package to include zstd source.
+
 ## v0.1.2
 
 Bug fixes:
