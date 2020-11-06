@@ -13,7 +13,9 @@ defmodule Bakeware.CPIO do
     |> String.split()
     |> Enum.each(&append_cpio(&1, fd, assembler.rel_path))
 
-    File.close(fd)
+    append_trailer(fd)
+
+    :ok = File.close(fd)
 
     if assembler.compress? do
       out = assembler.cpio <> ".z"
@@ -29,40 +31,48 @@ defmodule Bakeware.CPIO do
   defp append_cpio(path, fd, release_path) do
     stats = File.stat!(path)
     # Must include a null terminating byte
-    relative = Path.relative_to(path, release_path) <> <<0>>
+    relative = Path.relative_to(path, release_path)
 
-    IO.write(fd, build_header(stats, relative))
-    IO.write(fd, relative)
+    IO.binwrite(fd, build_header(stats.mode, stats.size, relative))
 
     if stats.type != :directory do
       File.open(path, [:read], &append_file(&1, fd))
+      IO.binwrite(fd, pad_to_4(stats.size))
     end
   end
 
   defp append_file(fd, cpio_fd) do
-    Enum.each(IO.stream(fd, :line), &IO.write(cpio_fd, &1))
+    stuff = IO.binread(fd, :all)
+    IO.binwrite(cpio_fd, stuff)
   end
 
-  defp build_header(stats, relative) do
+  defp append_trailer(fd) do
+    IO.binwrite(fd, build_header(0, 0, "TRAILER!!!"))
+  end
+
+  defp build_header(mode, size, relative) do
     namesize = byte_size(relative)
 
     [
       @cpio_magic,
       zero(),
-      pad_hex(stats.mode),
+      pad_hex(mode),
       zero(),
       zero(),
       zero(),
       zero(),
-      pad_hex(stats.size),
+      pad_hex(size),
       zero(),
       zero(),
       zero(),
       zero(),
-      pad_hex(namesize),
-      zero()
+      pad_hex(namesize + 1),
+      zero(),
+      relative,
+      # Null terminator on path
+      0,
+      pad_to_4(110 + namesize + 1)
     ]
-    |> Enum.join()
   end
 
   defp pad_hex(i) do
@@ -78,4 +88,14 @@ defmodule Bakeware.CPIO do
   end
 
   defp zero(), do: "00000000"
+
+  defp pad_to_4(length) do
+    y =
+      case Integer.mod(length, 4) do
+        0 -> 0
+        x -> 4 - x
+      end
+
+    :binary.copy(<<0>>, y)
+  end
 end
