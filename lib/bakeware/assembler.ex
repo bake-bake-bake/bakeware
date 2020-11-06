@@ -2,6 +2,8 @@ defmodule Bakeware.Assembler do
   @moduledoc false
   defstruct [:compress?, :cpio, :launcher, :name, :output, :path, :release, :rel_path, :trailer]
 
+  alias Bakeware.CPIO
+
   @doc false
   def assemble(%Mix.Release{} = release) do
     %__MODULE__{name: release.name, rel_path: release.path, release: release}
@@ -41,7 +43,7 @@ defmodule Bakeware.Assembler do
     |> create_paths()
     |> set_compression()
     |> add_start_script()
-    |> build_cpio()
+    |> CPIO.build()
     |> build_trailer()
     |> concat_files()
     |> cleanup_files()
