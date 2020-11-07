@@ -25,14 +25,16 @@ CFLAGS ?= -O2 -Wall -Wextra -Wno-unused-parameter -pedantic
 CFLAGS += -D_GNU_SOURCE
 LDFLAGS ?=
 
-BAKEWARE_OBJECTS = $(BUILD)/utils.o \
-	$(BUILD)/main.o \
-	$(BUILD)/trailer.o \
-	$(BUILD)/cpio.o \
-	$(BUILD)/unzstd.o \
+BAKEWARE_OBJECTS = \
 	$(BUILD)/cache.o \
+	$(BUILD)/cpio.o \
+	$(BUILD)/main.o \
+	$(BUILD)/rm_fr.o \
 	$(BUILD)/sha1.o \
-	$(BUILD)/sha_read.o
+	$(BUILD)/sha_read.o \
+	$(BUILD)/trailer.o \
+	$(BUILD)/unzstd.o \
+	$(BUILD)/utils.o
 
 ZSTD_OBJECTS = $(BUILD)/zstd/lib/decompress/huf_decompress.o \
 	$(BUILD)/zstd/lib/decompress/zstd_ddict.o \

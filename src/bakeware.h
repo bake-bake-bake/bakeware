@@ -66,6 +66,9 @@ void sha_init();
 ssize_t sha_read(int fd, void *buf, size_t nbytes);
 void sha_result(uint8_t *digest);
 
+// rm_fr
+int rm_fr(const char *path);
+
 // Cache management
 
 struct bakeware; // FIXME
