@@ -85,6 +85,34 @@ defmodule BakewareTest do
     assert result == "Hello, OTP Application!\n"
   end
 
+  @tag :tmp_dir
+  test "run bakeware executable simultaneously", %{tmp_dir: tmp_dir} do
+    # Test out launching the executable multiple times simultaneously.
+    # Everything should run ok, but internally, the extractors will
+    # step on each other and resolve the situation.
+
+    tasks =
+      for _ <- 0..3 do
+        Task.async(fn ->
+          System.cmd(@rel_test_binary, [], env: [{"BAKEWARE_CACHE", Path.absname(tmp_dir)}])
+        end)
+      end
+
+    results = Task.await_many(tasks, 30000)
+
+    for result <- results do
+      assert result == {"Hello, OTP Application!\n", 0}
+    end
+
+    # Check that the tmp directory got cleaned up
+    tmp_files = File.ls!(Path.join(tmp_dir, ".tmp"))
+    assert tmp_files == []
+
+    # Only one index
+    index_files = File.ls!(Path.join(tmp_dir, ".index"))
+    assert length(index_files) == 1
+  end
+
   test "get info from a bakeware executable" do
     {result, 0} =
       System.cmd(@rel_test_binary, ["--bw-info"], env: [{"BAKEWARE_CACHE", "/nowhere"}])
