@@ -61,6 +61,11 @@ void unzstd_init(size_t max_bytes);
 void unzstd_free();
 ssize_t unzstd_read(int fd, void *buf, size_t count);
 
+// sha_read
+void sha_init();
+ssize_t sha_read(int fd, void *buf, size_t nbytes);
+void sha_result(uint8_t *digest);
+
 // Cache management
 
 struct bakeware; // FIXME

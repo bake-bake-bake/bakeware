@@ -102,9 +102,11 @@ int cache_validate(struct bakeware *bw)
         return -1;
     }
 
+    sha_init();
+
     switch (bw->trailer.compression) {
     case BAKEWARE_COMPRESSION_NONE:
-        bw->reader = read;
+        bw->reader = sha_read;
         break;
 
     case BAKEWARE_COMPRESSION_ZSTD:
@@ -123,6 +125,13 @@ int cache_validate(struct bakeware *bw)
 
     if (bw->trailer.compression == BAKEWARE_COMPRESSION_ZSTD)
         unzstd_free();
+
+    uint8_t computed_sha[20];
+    sha_result(computed_sha);
+    if (memcmp(computed_sha, bw->trailer.sha1, sizeof(computed_sha)) != 0) {
+        bw_warn("SHA-1 mismatch. Corrupt archive");
+        return -1;
+    }
 
     if (!file_exists_in_cache_dir(bw, "start")) {
         bw_warn("Missing `start` script in CPIO");
