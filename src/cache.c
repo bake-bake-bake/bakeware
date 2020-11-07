@@ -144,7 +144,8 @@ int cache_validate(struct bakeware *bw)
     // Success, so make temp directory real.
     if (rename(tmp_dir, bw->cache_dir_app) < 0) {
         // Someone else beat us to extracting it.
-        bw_warn("TODODODODODOD - erase tmp_dir");
+        bw_warn("Simultaneous extraction detected. Cleaning up...");
+        (void) rm_fr(tmp_dir);
     }
 
     if (!file_exists_in_cache_dir(bw, "start")) {
