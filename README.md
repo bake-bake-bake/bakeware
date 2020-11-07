@@ -187,7 +187,7 @@ In general, command-line arguments passed to Bakeware applications are passed th
 
 The following arguments may be passed:
 
-* `--bw-info` - Print out information about the application
+* `--bw-info` - Print out information about the application and exit
 * `--bw-gc` - This cleans up all unused entries in the cache (NOT IMPLEMENTED)
 * `--bw-install` - Unpack the application to the cache only. Do not run.
 * `--bw-system-install` - Install to a system-wide location (NOT IMPLEMENTED)

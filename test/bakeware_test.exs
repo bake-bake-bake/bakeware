@@ -84,4 +84,11 @@ defmodule BakewareTest do
 
     assert result == "Hello, OTP Application!\n"
   end
+
+  test "get info from a bakeware executable" do
+    {result, 0} =
+      System.cmd(@rel_test_binary, ["--bw-info"], env: [{"BAKEWARE_CACHE", "/nowhere"}])
+
+    assert result =~ ~r/Trailer version: 1/
+  end
 end
