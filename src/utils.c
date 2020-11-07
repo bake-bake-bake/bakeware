@@ -98,6 +98,12 @@ void bw_find_executable_path(char *path, size_t len)
  */
 void bw_cache_directory(char *path, size_t len)
 {
+    const char *cache_path = getenv("BAKEWARE_CACHE");
+    if (cache_path) {
+        strncpy(path, cache_path, len - 1);
+        path[len - 1] = '\0';
+        return;
+    } else {
 #if defined (_WIN64) || defined(_WIN32)
 #error Implement
 #elif __APPLE__
@@ -107,6 +113,7 @@ void bw_cache_directory(char *path, size_t len)
 #else
 #error Implement
 #endif
+    }
 }
 
 /**
