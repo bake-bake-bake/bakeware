@@ -74,7 +74,7 @@ ssize_t unzstd_read(int fd, void *buf, size_t count)
             if (to_read == 0)
                 return 0;
 
-            ssize_t amount = read(fd, info.input_buffer, to_read);
+            ssize_t amount = sha_read(fd, info.input_buffer, to_read);
             if (amount <= 0) {
                 bw_fatal("Error reading %d bytes", (int) to_read);
                 return -1;
