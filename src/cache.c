@@ -14,13 +14,6 @@ void cache_init(struct bakeware *bw)
     snprintf(bw->cache_dir_app, sizeof(bw->cache_dir_app), "%s/%s", bw->cache_dir_base, bw->trailer.sha1_ascii);
 }
 
-static void trim_line(char *line)
-{
-    size_t len = strlen(line);
-    if (len > 0 && line[len - 1] == '\n')
-        line[len - 1] = 0;
-}
-
 static FILE *fopen_in_cache_dir(const struct bakeware *bw, const char *relpath, const char *modes)
 {
     char *path;
@@ -44,48 +37,13 @@ static bool file_exists_in_cache_dir(const struct bakeware *bw, const char *relp
 
 static bool is_cache_valid(const struct bakeware *bw)
 {
-    return file_exists_in_cache_dir(bw, "source_paths") &&
-        file_exists_in_cache_dir(bw, "start");
-}
-
-static bool has_source_path(const struct bakeware *bw)
-{
-    FILE *fp = fopen_in_cache_dir(bw, "source_paths", "r");
-
-    bool has_path = false;
-    if (fp) {
-        char line[256];
-        while (fgets(line, sizeof(line), fp)) {
-            trim_line(line);
-            if (strcmp(line, bw->path) == 0) {
-                has_path = true;
-                break;
-            }
-        }
-        fclose(fp);
-    }
-    return has_path;
-}
-
-static void add_source_path(const struct bakeware *bw)
-{
-    if (has_source_path(bw))
-        return;
-
-    FILE *fp = fopen_in_cache_dir(bw, "source_paths", "a");
-    if (!fp)
-        bw_fatal("Error updating source_paths in cache");
-    fprintf(fp, "%s\n", bw->path);
-    fclose(fp);
-
+    return file_exists_in_cache_dir(bw, "start");
 }
 
 int cache_validate(struct bakeware *bw)
 {
-    // Logic: if the cache directory exists for the app AND the source_paths file points back to the
-    //        executable, THEN the cache is valid.
+    // Logic: if the cache directory exists for the app, THEN the cache is valid.
     if (is_cache_valid(bw)) {
-        add_source_path(bw);
         return 0;
     }
 
@@ -153,8 +111,9 @@ int cache_validate(struct bakeware *bw)
         return -1;
     }
 
-    // Adding the source path says that we think the extraction is successful
-    add_source_path(bw);
+    // Everything ok? Then add to the index.
+    index_add_entry(bw);
+
     return 0;
 }
 

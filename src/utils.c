@@ -126,3 +126,15 @@ int bw_set_environment(const char *key, int index, const char *value)
     return putenv(str);
 }
 
+void bw_bin_to_hex(const uint8_t *input, char *output, size_t input_len)
+{
+    const char *lookup = "0123456789ABCDEF";
+    while (input_len > 0) {
+        uint8_t v = *input++;
+        output[0] = lookup[v >> 4];
+        output[1] = lookup[v & 0xf];
+        output += 2;
+        input_len--;
+    }
+    *output = '\0';
+}

@@ -28,6 +28,7 @@ LDFLAGS ?=
 BAKEWARE_OBJECTS = \
 	$(BUILD)/cache.o \
 	$(BUILD)/cpio.o \
+	$(BUILD)/index.o \
 	$(BUILD)/main.o \
 	$(BUILD)/rm_fr.o \
 	$(BUILD)/sha1.o \

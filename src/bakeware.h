@@ -32,6 +32,7 @@ void bw_find_executable_path(char *path, size_t len);
 
 void bw_cache_directory(char *path, size_t len);
 int bw_set_environment(const char *key, int index, const char *value);
+void bw_bin_to_hex(const uint8_t *input, char *output, size_t input_len);
 
 // Trailer parsing
 struct bakeware_trailer
@@ -44,7 +45,7 @@ struct bakeware_trailer
     size_t contents_length;
 
     uint8_t sha1[20];
-    char sha1_ascii[40];
+    char sha1_ascii[41];
 };
 
 #define BAKEWARE_COMPRESSION_NONE 0
@@ -75,6 +76,9 @@ struct bakeware; // FIXME
 void cache_init(struct bakeware *bw);
 int cache_validate(struct bakeware *bw);
 int cache_read_app_data(struct bakeware *bw);
+
+// index
+void index_add_entry(const struct bakeware *bw);
 
 // Program data
 struct bakeware
