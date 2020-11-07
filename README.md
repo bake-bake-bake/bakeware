@@ -189,7 +189,7 @@ The following arguments may be passed:
 
 * `--bw-info` - Print out information about the application
 * `--bw-gc` - This cleans up all unused entries in the cache (NOT IMPLEMENTED)
-* `--bw-install` - Do not run the application. Stop after installing to the cache directory. (NOT IMPLEMENTED)
+* `--bw-install` - Unpack the application to the cache only. Do not run.
 * `--bw-system-install` - Install to a system-wide location (NOT IMPLEMENTED)
 
 ### Environment variables

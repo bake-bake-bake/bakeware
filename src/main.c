@@ -118,5 +118,8 @@ int main(int argc, char *argv[])
 
     close(bw.fd);
 
-    run_application();
+    if (!bw.install_only)
+        run_application();
+
+    exit(EXIT_SUCCESS);
 }
