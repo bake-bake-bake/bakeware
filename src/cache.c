@@ -9,6 +9,8 @@
 
 void cache_init(struct bakeware *bw)
 {
+    snprintf(bw->cache_dir_tmp, sizeof(bw->cache_dir_tmp), "%s/.tmp", bw->cache_dir_base);
+    snprintf(bw->cache_dir_index, sizeof(bw->cache_dir_index), "%s/.index", bw->cache_dir_base);
     snprintf(bw->cache_dir_app, sizeof(bw->cache_dir_app), "%s/%s", bw->cache_dir_base, bw->trailer.sha1_ascii);
 }
 
@@ -89,11 +91,17 @@ int cache_validate(struct bakeware *bw)
 
     bw_debug("Cache invalid. Extracting...");
 
-    // Create the bakeware cache directory, but don't worry if this fails.
+    // Create the bakeware cache directory structure, but don't worry if they fails.
     (void) mkdir(bw->cache_dir_base, 0755);
+    (void) mkdir(bw->cache_dir_tmp, 0700);
+    (void) mkdir(bw->cache_dir_index, 0700);
 
-    if (mkdir(bw->cache_dir_app, 0755) < 0 && errno != EEXIST) {
-        bw_warn("Can't create %s", bw->cache_dir_app);
+    // Expand to a temporary directory
+    char tmp_dir_template[256+64];
+    snprintf(tmp_dir_template, sizeof(tmp_dir_template), "%s/XXXXXX", bw->cache_dir_tmp);
+    char *tmp_dir = mkdtemp(tmp_dir_template);
+    if (tmp_dir == NULL) {
+        bw_warn("Can't create expand archive under '%s'", bw->cache_dir_base);
         return -1;
     }
 
@@ -118,7 +126,7 @@ int cache_validate(struct bakeware *bw)
         bw_fatalx("Don't know how to handle compression type %d", bw->trailer.compression);
         break;
     }
-    if (cpio_extract_all(bw->reader, bw->fd, bw->cache_dir_app) < 0) {
+    if (cpio_extract_all(bw->reader, bw->fd, tmp_dir) < 0) {
         bw_warn("CPIO extraction failed.");
         return -1;
     }
@@ -133,8 +141,14 @@ int cache_validate(struct bakeware *bw)
         return -1;
     }
 
+    // Success, so make temp directory real.
+    if (rename(tmp_dir, bw->cache_dir_app) < 0) {
+        // Someone else beat us to extracting it.
+        bw_warn("TODODODODODOD - erase tmp_dir");
+    }
+
     if (!file_exists_in_cache_dir(bw, "start")) {
-        bw_warn("Missing `start` script in CPIO");
+        bw_warn("Missing `start` script in archive");
         return -1;
     }
 

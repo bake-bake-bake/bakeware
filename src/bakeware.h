@@ -91,6 +91,9 @@ struct bakeware
 
     // Cache
     char cache_dir_base[256];
+    char cache_dir_tmp[256 + 16];
+    char cache_dir_index[256 + 16];
+
     char cache_dir_app[256 + 65];
 
     // Application invocation
