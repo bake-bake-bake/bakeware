@@ -1,4 +1,5 @@
 #ifndef BAKEWARE_H
+#define BAKEWARE_H
 
 #include <stdbool.h>
 #include <stdlib.h>
