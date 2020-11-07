@@ -70,7 +70,8 @@ defmodule Bakeware.Assembler do
 
   defp build_trailer(assembler) do
     # maybe stream here to be more efficient
-    hash = :crypto.hash(:sha256, File.read!(assembler.cpio))
+    hash = :crypto.hash(:sha, File.read!(assembler.cpio))
+    hash_padding = :binary.copy(<<0>>, 12)
     offset = File.stat!(assembler.launcher).size
     cpio_size = File.stat!(assembler.cpio).size
 
@@ -79,8 +80,8 @@ defmodule Bakeware.Assembler do
     flags = 0
 
     trailer_bin =
-      <<hash::binary, cpio_size::32, offset::32, flags::16, compression::8, trailer_version::8,
-        "BAKE">>
+      <<hash::20-bytes, hash_padding::12-bytes, cpio_size::32, offset::32, flags::16,
+        compression::8, trailer_version::8, "BAKE">>
 
     File.write!(assembler.trailer, trailer_bin)
     assembler
