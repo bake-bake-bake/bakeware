@@ -43,8 +43,8 @@ struct bakeware_trailer
     off_t contents_offset;
     size_t contents_length;
 
-    uint8_t sha256[32];
-    char sha256_ascii[65];
+    uint8_t sha1[20];
+    char sha1_ascii[40];
 };
 
 #define BAKEWARE_COMPRESSION_NONE 0

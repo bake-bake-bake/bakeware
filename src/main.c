@@ -63,7 +63,7 @@ static void print_trailer_info(const struct bakeware_trailer *trailer)
     printf("Flags: 0x%04x\n", trailer->flags);
     printf("Contents offset: %d\n", (int) trailer->contents_offset);
     printf("Contents length: %d\n", (int) trailer->contents_length);
-    printf("SHA256: %s\n", trailer->sha256_ascii);
+    printf("SHA-1: %s\n", trailer->sha1_ascii);
 }
 
 // Initialize app state

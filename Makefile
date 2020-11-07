@@ -30,7 +30,9 @@ BAKEWARE_OBJECTS = $(BUILD)/utils.o \
 	$(BUILD)/trailer.o \
 	$(BUILD)/cpio.o \
 	$(BUILD)/unzstd.o \
-	$(BUILD)/cache.o
+	$(BUILD)/cache.o \
+	$(BUILD)/sha1.o \
+
 
 ZSTD_OBJECTS = $(BUILD)/zstd/lib/decompress/huf_decompress.o \
 	$(BUILD)/zstd/lib/decompress/zstd_ddict.o \

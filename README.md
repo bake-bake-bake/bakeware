@@ -204,7 +204,7 @@ Offset from end | Field           | Type           | Description
 -8              | Flags           | 16-bit integer | Set to 0 (no flags yet)
 -12             | Contents offset | 32-bit integer | Offset of CPIO archive
 -16             | Contents length | 32-bit integer | Length of CPIO archive
--48             | SHA256          | 32 bytes       | SHA-256 of the CPIO archive
+-48             | SHA1            | 20 bytes       | SHA-1 of the CPIO archive
 
 ## Cache directory
 
@@ -221,15 +221,11 @@ Here's the layout of each cache entry:
 
 Path                                | Created by | Description
  ---------------------------------- | ---------- | --------------------------
-`$CACHE_DIR/$SHA256/source_paths`   | Launcher   | A list of source paths (used for GC)
-`$CACHE_DIR/$SHA256/bin`            | CPIO       | OTP release's `bin` directory
-`$CACHE_DIR/$SHA256/erts-x.y.z`     | CPIO       | OTP release's ERTS
-`$CACHE_DIR/$SHA256/lib`            | CPIO       | OTP release's `lib` directory
-`$CACHE_DIR/$SHA256/releases`       | CPIO       | OTP release's `releases` directory
-`$CACHE_DIR/$SHA256/start`          | CPIO       | Start script. E.g., `bin/my_otp_release start`
-
-TODO: Add lock file to protect an executable being extracted on top of itself.
-This might actually work, though...
+`$CACHE_DIR/$SHA1/bin`              | CPIO       | OTP release's `bin` directory
+`$CACHE_DIR/$SHA1/erts-x.y.z`       | CPIO       | OTP release's ERTS
+`$CACHE_DIR/$SHA1/lib`              | CPIO       | OTP release's `lib` directory
+`$CACHE_DIR/$SHA1/releases`         | CPIO       | OTP release's `releases` directory
+`$CACHE_DIR/$SHA1/start`            | CPIO       | Start script. E.g., `bin/my_otp_release start`
 
 ## LICENSE
 

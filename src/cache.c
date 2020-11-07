@@ -9,7 +9,7 @@
 
 void cache_init(struct bakeware *bw)
 {
-    snprintf(bw->cache_dir_app, sizeof(bw->cache_dir_app), "%s/%s", bw->cache_dir_base, bw->trailer.sha256_ascii);
+    snprintf(bw->cache_dir_app, sizeof(bw->cache_dir_app), "%s/%s", bw->cache_dir_base, bw->trailer.sha1_ascii);
 }
 
 static void trim_line(char *line)
@@ -22,7 +22,7 @@ static void trim_line(char *line)
 static FILE *fopen_in_cache_dir(const struct bakeware *bw, const char *relpath, const char *modes)
 {
     char *path;
-    if (asprintf(&path, "%s/%s/%s", bw->cache_dir_base, bw->trailer.sha256_ascii, relpath) < 0)
+    if (asprintf(&path, "%s/%s/%s", bw->cache_dir_base, bw->trailer.sha1_ascii, relpath) < 0)
         bw_fatal("asprintf");
     FILE *fp = fopen(path, modes);
     free(path);
@@ -136,7 +136,7 @@ int cache_validate(struct bakeware *bw)
 
 int cache_read_app_data(struct bakeware *bw)
 {
-    snprintf(bw->app_path, sizeof(bw->app_path), "%s/%s/start", bw->cache_dir_base, bw->trailer.sha256_ascii);
+    snprintf(bw->app_path, sizeof(bw->app_path), "%s/%s/start", bw->cache_dir_base, bw->trailer.sha1_ascii);
 
     return 0;
 }
