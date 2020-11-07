@@ -232,11 +232,13 @@ Offset from end | Field           | Type           | Description
 Bakeware maintains a cache of extracted binaries. This is needed to run the
 OTP releases and it enables start-time optimizations.
 
-The cache directory location is system-specific:
+The default cache directory location is system-specific:
 
 * Windows - `"C:/Users/<USER>/AppData/Local/Bakeware/cache"`
 * MacOS - `"~/Library/Caches/Bakeware"`
 * Linux and other Unixes - `"~/.cache/bakeware"`
+
+You can override it by setting the `$BAKEWARE_CACHE` environment variable.
 
 Here's the layout of each cache entry:
 
