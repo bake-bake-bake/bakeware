@@ -31,12 +31,25 @@ defmodule BakewareTest do
     :ok
   end
 
+  defp fix_tmp_dir(tmp_dir) when is_binary(tmp_dir) do
+    tmp_dir
+  end
+
+  defp fix_tmp_dir(_tmp_dir) do
+    # Elixir 1.10 and earlier
+    path = Path.join(["tmp", "BakewareTest", Integer.to_string(:rand.uniform(10000))])
+    File.mkdir_p!(path)
+    path
+  end
+
   test "creates executable" do
     assert File.exists?(@rel_test_binary)
   end
 
   @tag :tmp_dir
   test "install creates expected directories", %{tmp_dir: tmp_dir} do
+    tmp_dir = fix_tmp_dir(tmp_dir)
+
     {_, 0} =
       System.cmd(@rel_test_binary, ["--bw-install"],
         env: [{"BAKEWARE_CACHE", Path.absname(tmp_dir)}]
@@ -73,6 +86,8 @@ defmodule BakewareTest do
 
   @tag :tmp_dir
   test "run bakeware executable", %{tmp_dir: tmp_dir} do
+    tmp_dir = fix_tmp_dir(tmp_dir)
+
     {result, 0} =
       System.cmd(@rel_test_binary, [], env: [{"BAKEWARE_CACHE", Path.absname(tmp_dir)}])
 
@@ -87,18 +102,22 @@ defmodule BakewareTest do
 
   @tag :tmp_dir
   test "run bakeware executable simultaneously", %{tmp_dir: tmp_dir} do
+    tmp_dir = fix_tmp_dir(tmp_dir)
+
     # Test out launching the executable multiple times simultaneously.
     # Everything should run ok, but internally, the extractors will
     # step on each other and resolve the situation.
-
     tasks =
-      for _ <- 0..3 do
+      for _ <- 1..4 do
         Task.async(fn ->
           System.cmd(@rel_test_binary, [], env: [{"BAKEWARE_CACHE", Path.absname(tmp_dir)}])
         end)
       end
 
-    results = Task.await_many(tasks, 30000)
+    results =
+      for task <- tasks do
+        Task.await(task, 30000)
+      end
 
     for result <- results do
       assert result == {"Hello, OTP Application!\n", 0}
