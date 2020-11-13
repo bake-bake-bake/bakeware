@@ -68,17 +68,6 @@ defmodule Bakeware.Assembler do
     assembler
   end
 
-  defp build_cpio(assembler) do
-    maybe_zstd = if assembler.compress?, do: '| zstd -15 -'
-
-    _ =
-      :os.cmd(
-        'cd #{assembler.rel_path} && find . | cpio -o -H newc -v #{maybe_zstd} > #{assembler.cpio}'
-      )
-
-    assembler
-  end
-
   defp build_trailer(assembler) do
     # maybe stream here to be more efficient
     hash = :crypto.hash(:sha256, File.read!(assembler.cpio))

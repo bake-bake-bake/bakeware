@@ -4,46 +4,25 @@ defmodule Bakeware.CPIO do
   @cpio_magic "070701"
 
   def build(%Assembler{} = assembler) do
-    {:ok, fd} = File.open(assembler.cpio, [:write, :append])
+    File.open(assembler.cpio, [:write, :append], fn cpio_fd ->
+      _ = append_files(assembler.rel_path, cpio_fd)
+      _ = append_trailer(cpio_fd)
+    end)
 
-    # TODO: replicate find to avoid shell out
-    # Path.wildcard("#{assembler.rel_path}/**/*")
-    :os.cmd('find #{assembler.rel_path}')
-    |> to_string()
-    |> String.split()
-    |> Enum.each(&append_cpio(&1, fd, assembler.rel_path))
-
-    append_trailer(fd)
-
-    :ok = File.close(fd)
-
-    if assembler.compress? do
-      out = assembler.cpio <> ".z"
-      :os.cmd('zstd -15 #{assembler.cpio} -o #{out} --rm')
-      File.rename(out, assembler.cpio)
-    end
+    _ = maybe_compress(assembler)
 
     assembler
   end
 
-  defp append_cpio(path, _fd, release_path) when path == release_path, do: :ignore
+  defp append_files(release_path, cpio_fd) do
+    for path <- Path.wildcard("#{release_path}/**/*"), path != release_path do
+      file = file_details(path, release_path)
 
-  defp append_cpio(path, fd, release_path) do
-    stats = File.stat!(path)
-    # Must include a null terminating byte
-    relative = Path.relative_to(path, release_path)
+      # write CPIO header
+      IO.binwrite(cpio_fd, build_header(file.mode, file.size, file.relative_path))
 
-    IO.binwrite(fd, build_header(stats.mode, stats.size, relative))
-
-    if stats.type != :directory do
-      File.open(path, [:read], &append_file(&1, fd))
-      IO.binwrite(fd, pad_to_4(stats.size))
+      maybe_write_file_contents(file, cpio_fd)
     end
-  end
-
-  defp append_file(fd, cpio_fd) do
-    stuff = IO.binread(fd, :all)
-    IO.binwrite(cpio_fd, stuff)
   end
 
   defp append_trailer(fd) do
@@ -75,27 +54,47 @@ defmodule Bakeware.CPIO do
     ]
   end
 
+  defp file_details(path, release_path) do
+    File.stat!(path)
+    |> Map.from_struct()
+    |> Map.put(:path, path)
+    |> Map.put(:relative_path, Path.relative_to(path, release_path))
+  end
+
+  defp maybe_compress(%{compress?: true} = assembler) do
+    out = assembler.cpio <> ".zst"
+    {_, 0} = System.cmd("zstd", ["-15", assembler.cpio, "-o", out, "--rm"])
+    File.rename(out, assembler.cpio)
+  end
+
+  defp maybe_compress(_assembler), do: :ignore
+
+  defp maybe_write_file_contents(%{type: :directory}, _cpio_fd), do: :ignore
+
+  defp maybe_write_file_contents(file, cpio_fd) do
+    # Read the file and append to CPIO
+    File.open(file.path, [:read], fn fd ->
+      IO.binwrite(cpio_fd, IO.binread(fd, :all))
+    end)
+
+    IO.binwrite(cpio_fd, pad_to_4(file.size))
+  end
+
   defp pad_hex(i) do
     hex = Integer.to_string(i, 16)
     pad_size = 8 - byte_size(hex)
 
-    if pad_size > 0 do
-      pad = for _i <- 1..pad_size, into: "", do: "0"
-      pad <> hex
-    else
-      hex
+    :binary.copy("0", pad_size) <> hex
+  end
+
+  defp pad_to_4(length) do
+    case Integer.mod(length, 4) do
+      0 -> <<>>
+      1 -> <<0, 0, 0>>
+      2 -> <<0, 0>>
+      3 -> <<0>>
     end
   end
 
   defp zero(), do: "00000000"
-
-  defp pad_to_4(length) do
-    y =
-      case Integer.mod(length, 4) do
-        0 -> 0
-        x -> 4 - x
-      end
-
-    :binary.copy(<<0>>, y)
-  end
 end
