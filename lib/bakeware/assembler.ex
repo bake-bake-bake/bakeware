@@ -2,6 +2,8 @@ defmodule Bakeware.Assembler do
   @moduledoc false
   defstruct [:compress?, :cpio, :launcher, :name, :output, :path, :release, :rel_path, :trailer]
 
+  alias Bakeware.CPIO
+
   @doc false
   def assemble(%Mix.Release{} = release) do
     %__MODULE__{name: release.name, rel_path: release.path, release: release}
@@ -41,7 +43,7 @@ defmodule Bakeware.Assembler do
     |> create_paths()
     |> set_compression()
     |> add_start_script()
-    |> build_cpio()
+    |> CPIO.build()
     |> build_trailer()
     |> concat_files()
     |> cleanup_files()
@@ -62,17 +64,6 @@ defmodule Bakeware.Assembler do
 
     File.write!(start_path, script)
     File.chmod!(start_path, 0o755)
-
-    assembler
-  end
-
-  defp build_cpio(assembler) do
-    maybe_zstd = if assembler.compress?, do: '| zstd -15 -'
-
-    _ =
-      :os.cmd(
-        'cd #{assembler.rel_path} && find . | cpio -o -H newc -v #{maybe_zstd} > #{assembler.cpio}'
-      )
 
     assembler
   end
