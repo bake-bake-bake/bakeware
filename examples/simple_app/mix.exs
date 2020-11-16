@@ -34,6 +34,7 @@ defmodule SimpleApp.MixProject do
     [
       overwrite: true,
       cookie: "#{@app}_cookie",
+      quiet: true,
       steps: [:assemble, &Bakeware.assemble/1],
       strip_beams: Mix.env() == :prod
     ]
