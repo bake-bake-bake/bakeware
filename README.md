@@ -148,6 +148,18 @@ do:
 5. Make sure that compile-time dependencies are marked as `runtime: false` in
    your `mix.exs` so that they're not included
 
+### Erlang distribution
+
+Bakeware uses [Mix releases](https://hexdocs.pm/mix/Mix.Tasks.Release.html) and
+inherits the default of starting of Erlang distribution. If you're using
+Bakeware for commandline or other short-lived applications, this unnecessarily
+starts Erlang distribution servers running and prevents two application
+instances from running at a time.
+
+To disable, run `mix release.init` to create starter `env.sh.eex` and
+`env.bat.eex` files in the `rel` directory. Then edit the files to set
+`RELEASE_DISTRIBUTION=none`.
+
 ### Creating cross-platform binaries
 
 Bakeware binaries include the Erlang runtime but there are still dependencies on
