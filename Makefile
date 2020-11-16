@@ -22,6 +22,7 @@ PREFIX = $(MIX_APP_PATH)/launcher
 BUILD  = $(MIX_APP_PATH)/obj
 
 CFLAGS ?= -O2 -Wall -Wextra -Wno-unused-parameter -pedantic
+CFLAGS += -D_GNU_SOURCE
 LDFLAGS ?=
 
 BAKEWARE_OBJECTS = $(BUILD)/utils.o \
