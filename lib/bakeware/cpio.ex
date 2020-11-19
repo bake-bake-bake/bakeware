@@ -63,7 +63,10 @@ defmodule Bakeware.CPIO do
 
   defp maybe_compress(%{compress?: true} = assembler) do
     out = assembler.cpio <> ".zst"
-    {_, 0} = System.cmd("zstd", ["-15", assembler.cpio, "-o", out, "--rm"])
+
+    {_, 0} =
+      System.cmd("zstd", ["-#{assembler.compression_level}", assembler.cpio, "-o", out, "--rm"])
+
     File.rename(out, assembler.cpio)
   end
 

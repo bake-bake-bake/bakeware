@@ -1,6 +1,17 @@
 defmodule Bakeware.Assembler do
   @moduledoc false
-  defstruct [:compress?, :cpio, :launcher, :name, :output, :path, :release, :rel_path, :trailer]
+  defstruct [
+    :compress?,
+    :compression_level,
+    :cpio,
+    :launcher,
+    :name,
+    :output,
+    :path,
+    :release,
+    :rel_path,
+    :trailer
+  ]
 
   alias Bakeware.CPIO
 
@@ -108,6 +119,8 @@ defmodule Bakeware.Assembler do
   end
 
   defp set_compression(assembler) do
+    ##
+    # TODO: Make compression required and move this
     compress? =
       case System.find_executable("zstd") do
         nil ->
@@ -122,6 +135,16 @@ defmodule Bakeware.Assembler do
           true
       end
 
-    %{assembler | compress?: compress?}
+    compression_level = assembler.release.options[:compression_level] || 15
+
+    if compression_level not in 1..19 do
+      Mix.raise(
+        "[Bakeware] invalid zstd compression level - Must be an integer 1-19. Got: #{
+          inspect(compression_level)
+        }"
+      )
+    end
+
+    %{assembler | compression_level: compression_level, compress?: compress?}
   end
 end
