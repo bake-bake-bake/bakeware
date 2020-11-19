@@ -29,7 +29,8 @@ Here's a quick list of features:
   release settings
 * Supports OSX and Linux (We wrote the code with Windows and the BSDs in mind,
   so support for those platforms may not be far off)
-* [Zstd compression](https://en.wikipedia.org/wiki/Zstandard) for small binaries
+* [Zstandard compression](https://en.wikipedia.org/wiki/Zstandard) for smaller
+  binaries
 * Optional support for automatic software updates (work in progress)
 * Command-line argument passing conveniences
 * Lots of examples
@@ -65,6 +66,12 @@ def release do
     ]
   ]
 end
+
+Bakeware adds the following options (these are at the same level as `:steps`
+above):
+
+* `:compression_level` - Zstandard compression level (1 to 19) where higher
+  numbers generally result in better compression, but are slower to build
 ```
 <!-- ASSEMBLE !-->
 
@@ -147,6 +154,8 @@ do:
    for files or dependencies that you might be including on accident.
 5. Make sure that compile-time dependencies are marked as `runtime: false` in
    your `mix.exs` so that they're not included
+6. Try raising the compression Zstandard compression level by setting
+  `:compression_level` in the `mix.exs` release config
 
 ### Erlang distribution
 
@@ -212,7 +221,7 @@ Offset from end | Field           | Type           | Description
  -------------- | --------------- | -------------- | -----------
 -4              | Magic           | 4 byte string  | Set to "BAKE"
 -5              | Trailer version | 8-bit integer  | Set to 1
--6              | Compression     | 8-bit integer  | 0 = No compression, 1 = Zstd
+-6              | Compression     | 8-bit integer  | 0 = No compression, 1 = Zstandard
 -8              | Flags           | 16-bit integer | Set to 0 (no flags yet)
 -12             | Contents offset | 32-bit integer | Offset of CPIO archive
 -16             | Contents length | 32-bit integer | Length of CPIO archive
