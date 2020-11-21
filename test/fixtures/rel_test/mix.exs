@@ -36,7 +36,8 @@ defmodule RelTest.MixProject do
       cookie: "#{@app}_cookie",
       quiet: true,
       steps: [:assemble, &Bakeware.assemble/1],
-      strip_beams: Mix.env() == :prod
+      strip_beams: Mix.env() == :prod,
+      compression_level: 1
     ]
   end
 end
