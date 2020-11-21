@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.1.4
+
+This release doesn't change much externally. Internally, we've started cleaning
+up the code and adding tests to make Bakeware easier for us to maintain. If you
+have existing Bakeware projects, you may also be interested in our example
+updates to turn off Erlang distribution and remove the verbose mix release
+instructions.
+
+Bug fixes:
+
+* Running the same Bakeware archive at or near the same time now works.
+  Previously, it was possible for multiple instances to collide when
+  extracting.
+
 ## v0.1.3
 
 Bug fixes:
