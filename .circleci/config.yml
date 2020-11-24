@@ -1,5 +1,17 @@
 version: 2.1
 
+parameters:
+  elixir:
+    type: string
+    default: 1.11.2
+  erlang:
+    type: string
+    default: 23.1.4
+
+example_requires: &example_requires
+  requires:
+    - elixir-1.11.2-otp-23.1.4
+
 commands:
   background_execute:
     parameters:
@@ -21,10 +33,14 @@ commands:
       env_setup:
         type: steps
         default: []
+      os:
+        type: string
+        default: alpine
     steps:
       - compile:
           working_directory: examples/<< parameters.example >>
           env_setup: << parameters.env_setup >>
+          os: << parameters.os >>
       - run: mkdir ~/.cache
       - run:
           command: mix release
@@ -32,6 +48,7 @@ commands:
       - steps: << parameters.commands >>
       - put_cache:
           working_directory: examples/<< parameters.example >>
+          os: << parameters.os >>
 
   compile:
     parameters:
@@ -41,13 +58,59 @@ commands:
       env_setup:
         type: steps
         default: []
+      os:
+        type: string
     steps:
       - checkout
-      - run:
-          name: Install system dependencies
-          command: |
-            apk update
-            apk add build-base
+      - when:
+          condition:
+            equal: [alpine, << parameters.os >>]
+          steps:
+            - run:
+                name: Install system dependencies
+                command: |
+                  apk update
+                  apk add build-base
+      - when:
+          condition:
+            equal: [mac, <<parameters.os>>]
+          steps:
+            - restore_cache:
+                name: Restore asdf cache
+                keys:
+                  - v1-asdf-v0.8.0-cache-<<parameters.os>>-erlang-<<pipeline.parameters.erlang>>-elixir-<<pipeline.parameters.elixir>>
+            - run:
+                name: install asdf
+                command: |
+                  [ -d ~/.asdf-vm ] || git clone https://github.com/asdf-vm/asdf.git ~/.asdf-vm --branch v0.8.0
+                  echo 'source ~/.asdf-vm/asdf.sh' >> $BASH_ENV
+                  source $BASH_ENV
+            - run:
+                name: setup asdf
+                command: |
+                  asdf plugin-list | grep erlang || asdf plugin-add erlang git@github.com:asdf-vm/asdf-erlang.git
+                  asdf plugin-update erlang
+                  cd ~/.asdf/plugins/erlang && git checkout HEAD && cd -
+
+                  asdf plugin-list | grep elixir || asdf plugin-add elixir git@github.com:asdf-vm/asdf-elixir.git
+                  asdf plugin-update elixir
+                  cd ~/.asdf/plugins/elixir && git checkout HEAD && cd -
+            - run:
+                name: install Erlang
+                command: |
+                  asdf install erlang <<pipeline.parameters.erlang>>
+                  asdf global erlang <<pipeline.parameters.erlang>>
+            - run:
+                name: install Elixir
+                command: |
+                  asdf install elixir <<pipeline.parameters.elixir>>
+                  asdf global elixir <<pipeline.parameters.elixir>>
+            - save_cache:
+                name: Save asdf cache
+                key: v1-asdf-v0.8.0-cache-<<parameters.os>>-erlang-<<pipeline.parameters.erlang>>-elixir-<<pipeline.parameters.elixir>>
+                paths:
+                  - ~/.asdf
+                  - ~/.asdf-vm
       - run:
           name: Install hex and rebar
           command: |
@@ -55,7 +118,7 @@ commands:
             mix local.rebar --force
       - restore_cache:
           keys:
-            - v1-mix-cache-{{ checksum "<<parameters.working_directory>>/mix.lock" }}
+            - v1-mix-cache-<<parameters.os>>-{{ checksum "<<parameters.working_directory>>/mix.lock" }}
       - steps: << parameters.env_setup >>
       - run:
           command: mix deps.get
@@ -69,9 +132,11 @@ commands:
       working_directory:
         type: string
         default: "."
+      os:
+        type: string
     steps:
       - save_cache:
-          key: v1-mix-cache-{{ checksum "<<parameters.working_directory>>/mix.lock" }}
+          key: v1-mix-cache-<<parameters.os>>-{{ checksum "<<parameters.working_directory>>/mix.lock" }}
           paths:
             - <<parameters.working_directory>>/_build
             - <<parameters.working_directory>>/deps
@@ -91,30 +156,32 @@ commands:
           no_output_timeout: 10s
 
 executors:
-  hexpm:
-    parameters:
-      elixir:
-        type: string
-      erlang:
-        type: string
+  alpine: &alpine
     docker:
-      - image: hexpm/elixir:<< parameters.elixir >>-erlang-<< parameters.erlang >>-alpine-3.12.0
+      - image: hexpm/elixir:<< pipeline.parameters.elixir >>-erlang-<< pipeline.parameters.erlang >>-alpine-3.12.1
     environment:
       LC_ALL: C.UTF-8
       SUDO: true
     working_directory: ~/repo
+  mac: &mac
+    macos:
+      xcode: 12.2.0
+    working_directory: ~/repo
 
 example_env: &example_env
-  executor:
-    name: hexpm
-    elixir: 1.11.1
-    erlang: 23.1.1
+  parameters:
+    example:
+      type: string
+      default: ""
+    args:
+      type: string
+      default: ""
+    os:
+      type: string
+      default: alpine
+  executor: << parameters.os >>
   environment:
     MIX_ENV: prod
-
-example_requires: &example_requires
-  requires:
-    - elixir-1.11.1-otp-23.1.1
 
 jobs:
   build:
@@ -123,29 +190,25 @@ jobs:
         type: string
       erlang:
         type: string
-    executor:
-      name: hexpm
-      elixir: << parameters.elixir >>
-      erlang: << parameters.erlang >>
+      os:
+        type: string
+    executor: <<parameters.os>>
     steps:
-      - compile
+      - compile:
+          os: <<parameters.os>>
       - run: mix format --check-formatted
       - run: mix test
       - run: mix docs
       - run: mix hex.build
       # - run: mix dialyzer
-      - put_cache
+      - put_cache:
+          os: <<parameters.os>>
 
   test_script:
-    parameters:
-      example:
-        type: string
-      args:
-        type: string
-        default: ""
     <<: *example_env
     steps:
       - execute_example:
+          os: << parameters.os >>
           example: << parameters.example >>
           commands:
             - run:
@@ -159,6 +222,7 @@ jobs:
     steps:
       - execute_example:
           example: iex_prompt
+          os: <<parameters.os>>
           commands:
             - background_execute:
                 example: iex_prompt
@@ -171,10 +235,15 @@ jobs:
     steps:
       - execute_example:
           example: scenic_app
+          os: <<parameters.os>>
           env_setup:
-            - run:
-                name: Install glfw
-                command: apk add glew-dev glew glfw glfw-dev pkgconfig
+            - when:
+                condition:
+                  equal: [alpine, << parameters.os >>]
+                steps:
+                  - run:
+                      name: Install glfw
+                      command: apk add glew-dev glew glfw glfw-dev pkgconfig
           commands:
             - background_execute:
                 example: scenic_app
@@ -187,10 +256,15 @@ jobs:
     steps:
       - execute_example:
           example: phoenix_app
+          os: <<parameters.os>>
           env_setup:
-            - run:
-                name: Install node
-                command: apk add nodejs nodejs-npm
+            - when:
+                condition:
+                  equal: [alpine, << parameters.os >>]
+                steps:
+                  - run:
+                      name: Install node
+                      command: apk add nodejs nodejs-npm
             - run: 
                 command: mix setup
                 working_directory: examples/phoenix_app
@@ -211,34 +285,54 @@ workflows:
           name: elixir-<<matrix.elixir>>-otp-<<matrix.erlang>>
           matrix:
             parameters:
-              elixir: [1.10.4, 1.11.1]
-              erlang: [23.1.1]
+              os: [alpine]
+              elixir: [1.10.4, 1.11.2]
+              erlang: [23.1.4]
 
       - test_script:
           <<: *example_requires
-          name: test simple_app
+          name: test simple_app <<matrix.os>>
           example: simple_app
+          matrix:
+            parameters:
+              example: simple_app
+              os: [mac, alpine]
 
       - test_script:
           <<: *example_requires
-          name: test simple_script
-          example: simple_script
-          args: howdy! --upcase
+          name: test simple_script <<matrix.os>>
+          matrix:
+            parameters:
+              example: [simple_app]
+              args: [howdy! --upcase]
+              os: [mac, alpine]
 
       - test_script:
           <<: *example_requires
-          name: test nif_script
-          example: nif_script
-          args: 2 2
+          name: test nif_script <<matrix.os>>
+          matrix:
+            parameters:
+              example: [nif_script]
+              args: [2 2]
+              os: [alpine, mac]
 
       - test_iex:
           <<: *example_requires
-          name: test iex_prompt
+          name: test iex_prompt <<matrix.os>>
+          matrix:
+            parameters:
+              os: [alpine, mac]
 
       - test_scenic:
           <<: *example_requires
-          name: test scenic_app
+          name: test scenic_app <<matrix.os>>
+          matrix:
+            parameters:
+              os: [alpine]
 
       - test_phoenix:
           <<: *example_requires
-          name: test phoenix_app
+          name: test phoenix_app <<matrix.os>>
+          matrix:
+            parameters:
+              os: [alpine, mac]
