@@ -73,6 +73,13 @@ commands:
                   apk add build-base
       - when:
           condition:
+            equal: [ubuntu, << parameters.os >>]
+          steps:
+            - run:
+                name: Install system dependencies
+                command: apt install -y build-essential ca-certificates
+      - when:
+          condition:
             equal: [mac, <<parameters.os>>]
           steps:
             - restore_cache:
@@ -167,6 +174,13 @@ executors:
     macos:
       xcode: 12.2.0
     working_directory: ~/repo
+  ubuntu: &ubuntu
+    docker:
+      - image: hexpm/elixir:1.11.2-erlang-23.1.4-ubuntu-groovy-20201022.1
+    environment:
+      LC_ALL: C.UTF-8
+      SUDO: true
+    working_directory: ~/repo
 
 example_env: &example_env
   parameters:
@@ -244,6 +258,13 @@ jobs:
                   - run:
                       name: Install glfw
                       command: apk add glew-dev glew glfw glfw-dev pkgconfig
+            - when:
+                condition:
+                  equal: [ubuntu, << parameters.os >>]
+                steps:
+                  - run:
+                      name: Install glfw
+                      command: apt-get install -y pkgconf libglfw3 libglfw3-dev libglew2.1 libglew-dev
           commands:
             - background_execute:
                 example: scenic_app
@@ -265,6 +286,13 @@ jobs:
                   - run:
                       name: Install node
                       command: apk add nodejs nodejs-npm
+            - when:
+                condition:
+                  equal: [ubuntu, << parameters.os >>]
+                steps:
+                  - run:
+                      name: Install node
+                      command: apt install -y nodejs npm
             - run: 
                 command: mix setup
                 working_directory: examples/phoenix_app
@@ -296,7 +324,7 @@ workflows:
           matrix:
             parameters:
               example: simple_app
-              os: [mac, alpine]
+              os: [mac, alpine, ubuntu]
 
       - test_script:
           <<: *example_requires
@@ -305,7 +333,7 @@ workflows:
             parameters:
               example: [simple_app]
               args: [howdy! --upcase]
-              os: [mac, alpine]
+              os: [mac, alpine, ubuntu]
 
       - test_script:
           <<: *example_requires
@@ -314,25 +342,25 @@ workflows:
             parameters:
               example: [nif_script]
               args: [2 2]
-              os: [alpine, mac]
+              os: [alpine, mac, ubuntu]
 
       - test_iex:
           <<: *example_requires
           name: test iex_prompt <<matrix.os>>
           matrix:
             parameters:
-              os: [alpine, mac]
+              os: [alpine, mac, ubuntu]
 
       - test_scenic:
           <<: *example_requires
           name: test scenic_app <<matrix.os>>
           matrix:
             parameters:
-              os: [alpine]
+              os: [alpine, ubuntu]
 
       - test_phoenix:
           <<: *example_requires
           name: test phoenix_app <<matrix.os>>
           matrix:
             parameters:
-              os: [alpine, mac]
+              os: [alpine, mac, ubuntu]
