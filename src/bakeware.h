@@ -109,6 +109,9 @@ struct bakeware
 
     // Application invocation
     char app_path[256 + 128];
+
+    // Mix Release command
+    char start_command[BAKEWARE_MAX_START_COMMAND_LEN + 1];
 };
 
 #endif

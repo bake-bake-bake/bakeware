@@ -33,6 +33,12 @@ static void process_arguments(int argc, char *argv[])
             bw.print_info = true;
             argv[i] = "";
             break;
+        } else if (strcmp(argv[i], "--bw-command") == 0) {
+            strncpy(bw.start_command, argv[i + 1], BAKEWARE_MAX_START_COMMAND_LEN);
+            bw.start_command[BAKEWARE_MAX_START_COMMAND_LEN] = 0;
+            argv[i] = "";
+            argv[i + 1] = "";
+            break;
         }
     }
 }
@@ -81,9 +87,15 @@ static void init_bk(int argc, char *argv[])
 
 static void run_application()
 {
+    const char *start_command;
+    if (*bw.start_command != '\0')
+        start_command = bw.start_command;
+    else
+        start_command = bw.trailer.start_command;
+
     bw_debug("Running %s...", bw.app_path);
     update_environment(bw.argc, bw.argv);
-    execl(bw.app_path, bw.app_path, bw.trailer.start_command, NULL);
+    execl(bw.app_path, bw.app_path, start_command, NULL);
     bw_fatal("Failed to start application '%s'", bw.app_path);
 }
 
