@@ -162,4 +162,16 @@ defmodule BakewareTest do
     # See the command test's mix.exs file to see that it runs "version" by default
     assert result == "command_test 0.1.0\n"
   end
+
+  @tag :tmp_dir
+  test "runs with specified mix release command", %{tmp_dir: tmp_dir} do
+    tmp_dir = fix_tmp_dir(tmp_dir)
+
+    {result, 0} =
+      System.cmd(@rel_test_binary, ["--bw-command", "version"],
+        env: [{"BAKEWARE_CACHE", Path.absname(tmp_dir)}]
+      )
+
+    assert result == "rel_test 0.1.0\n"
+  end
 end
