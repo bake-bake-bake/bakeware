@@ -1,6 +1,7 @@
 defmodule Bakeware.Assembler do
   @moduledoc false
   defstruct [
+    :start_command,
     :compress?,
     :compression_level,
     :cpio,
@@ -14,6 +15,7 @@ defmodule Bakeware.Assembler do
   ]
 
   @type t() :: %__MODULE__{
+          start_command: binary(),
           compress?: boolean(),
           compression_level: 1..19,
           cpio: Path.t(),
@@ -69,6 +71,7 @@ defmodule Bakeware.Assembler do
     assembler
     |> create_paths()
     |> set_compression()
+    |> set_start_command()
     |> add_start_script()
     |> CPIO.build()
     |> build_trailer()
@@ -86,7 +89,7 @@ defmodule Bakeware.Assembler do
     if [ -z "$SELF" ]; then SELF="$0"; fi
     ROOT="$(cd "$(dirname "$SELF")" && pwd -P)"
 
-    $ROOT/#{start_script_path} start
+    $ROOT/#{start_script_path} $1
     """
 
     File.write!(start_path, script)
@@ -98,7 +101,8 @@ defmodule Bakeware.Assembler do
   defp build_trailer(assembler) do
     # maybe stream here to be more efficient
     hash = :crypto.hash(:sha, File.read!(assembler.cpio))
-    hash_padding = :binary.copy(<<0>>, 12)
+    cmd_len = byte_size(assembler.start_command)
+    cmd_padding = :binary.copy(<<0>>, 12 - cmd_len)
     offset = File.stat!(assembler.launcher).size
     cpio_size = File.stat!(assembler.cpio).size
 
@@ -107,8 +111,8 @@ defmodule Bakeware.Assembler do
     flags = 0
 
     trailer_bin =
-      <<hash::20-bytes, hash_padding::12-bytes, cpio_size::32, offset::32, flags::16,
-        compression::8, trailer_version::8, "BAKE">>
+      <<hash::20-bytes, assembler.start_command::binary, cmd_padding::binary, cpio_size::32,
+        offset::32, flags::16, compression::8, trailer_version::8, "BAKE">>
 
     File.write!(assembler.trailer, trailer_bin)
     assembler
@@ -162,5 +166,22 @@ defmodule Bakeware.Assembler do
     end
 
     %{assembler | compression_level: compression_level, compress?: compress?}
+  end
+
+  defp set_start_command(assembler) do
+    command = assembler.release.options[:start_command] || "start"
+    cmd_len = byte_size(command)
+
+    if cmd_len > 12 do
+      err = """
+      [Bakeware] invalid start command. See the mix release documentation for options
+
+        https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-bin-release_name-commands
+      """
+
+      Mix.raise(err)
+    end
+
+    %{assembler | start_command: command}
   end
 end

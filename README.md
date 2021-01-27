@@ -72,6 +72,9 @@ above):
 
 * `:compression_level` - Zstandard compression level (1 to 19) where higher
   numbers generally result in better compression, but are slower to build
+* `:start_command` - The start script command to run when invoked. This defaults
+  to `"start"`, but can be changed to `"start_iex"`, for example, if you want a
+  prompt.
 ```
 <!-- ASSEMBLE !-->
 
