@@ -83,7 +83,7 @@ static void run_application()
 {
     bw_debug("Running %s...", bw.app_path);
     update_environment(bw.argc, bw.argv);
-    execl(bw.app_path, bw.app_path, NULL);
+    execl(bw.app_path, bw.app_path, bw.trailer.start_command, NULL);
     bw_fatal("Failed to start application '%s'", bw.app_path);
 }
 

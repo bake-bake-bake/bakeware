@@ -12,6 +12,7 @@
 #define BW_TRAILER_V1_FLAGS           (BW_TRAILER_V1_LENGTH - 8)
 #define BW_TRAILER_V1_CONTENTS_OFFSET (BW_TRAILER_V1_LENGTH - 12)
 #define BW_TRAILER_V1_CONTENTS_LENGTH (BW_TRAILER_V1_LENGTH - 16)
+#define BW_TRAILER_V1_START_COMMAND   (BW_TRAILER_V1_LENGTH - 28)
 #define BW_TRAILER_V1_SHA1            (BW_TRAILER_V1_LENGTH - 48)
 
 static uint32_t read_be32(const uint8_t *buffer)
@@ -56,7 +57,8 @@ int bw_read_trailer(int fd, struct bakeware_trailer *trailer)
     trailer->contents_length = read_be32(&buffer[BW_TRAILER_V1_CONTENTS_LENGTH]);
     memcpy(trailer->sha1, &buffer[BW_TRAILER_V1_SHA1], sizeof(trailer->sha1));
     sha1_to_ascii(trailer->sha1, trailer->sha1_ascii);
+    memcpy(trailer->start_command, &buffer[BW_TRAILER_V1_START_COMMAND], BAKEWARE_MAX_START_COMMAND_LEN);
+    trailer->start_command[BAKEWARE_MAX_START_COMMAND_LEN] = 0;
 
     return 0;
 }
-

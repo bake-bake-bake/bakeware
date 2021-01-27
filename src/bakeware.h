@@ -34,6 +34,8 @@ void bw_cache_directory(char *path, size_t len);
 int bw_set_environment(const char *key, int index, const char *value);
 void bw_bin_to_hex(const uint8_t *input, char *output, size_t input_len);
 
+#define BAKEWARE_MAX_START_COMMAND_LEN 12
+
 // Trailer parsing
 struct bakeware_trailer
 {
@@ -46,6 +48,8 @@ struct bakeware_trailer
 
     uint8_t sha1[20];
     char sha1_ascii[41];
+
+    char start_command[BAKEWARE_MAX_START_COMMAND_LEN + 1];
 };
 
 #define BAKEWARE_COMPRESSION_NONE 0

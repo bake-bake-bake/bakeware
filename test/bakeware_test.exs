@@ -17,11 +17,15 @@ defmodule BakewareTest do
                    )
 
   setup_all do
-    options = [cd: @rel_test_path, env: [{"MIX_ENV", "prod"}]]
+    build(@rel_test_path)
+  end
+
+  defp build(path) do
+    options = [cd: path, env: [{"MIX_ENV", "prod"}]]
 
     # Start fresh
     ["_build", "mix.lock", "deps"]
-    |> Enum.map(&Path.join(@rel_test_path, &1))
+    |> Enum.map(&Path.join(path, &1))
     |> Enum.each(&File.rm_rf!/1)
 
     {_, 0} = System.cmd("mix", ["deps.get"], options)
@@ -137,5 +141,25 @@ defmodule BakewareTest do
       System.cmd(@rel_test_binary, ["--bw-info"], env: [{"BAKEWARE_CACHE", "/nowhere"}])
 
     assert result =~ ~r/Trailer version: 1/
+  end
+
+  @tag :tmp_dir
+  test "changing the start command", %{tmp_dir: tmp_dir} do
+    command_test_path = Path.expand(Path.join([__DIR__, "fixtures", "command_test"]))
+
+    command_test_binary =
+      Path.expand(
+        Path.join([command_test_path, "_build", "prod", "rel", "bakeware", "command_test"])
+      )
+
+    build(command_test_path)
+
+    tmp_dir = fix_tmp_dir(tmp_dir)
+
+    {result, 0} =
+      System.cmd(command_test_binary, [], env: [{"BAKEWARE_CACHE", Path.absname(tmp_dir)}])
+
+    # See the command test's mix.exs file to see that it runs "version" by default
+    assert result == "command_test 0.1.0\n"
   end
 end
