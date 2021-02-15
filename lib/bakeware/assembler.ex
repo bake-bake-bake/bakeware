@@ -13,9 +13,23 @@ defmodule Bakeware.Assembler do
     :trailer
   ]
 
+  @type t() :: %__MODULE__{
+          compress?: boolean(),
+          compression_level: 1..19,
+          cpio: Path.t(),
+          launcher: Path.t(),
+          name: String.t(),
+          output: Path.t(),
+          path: Path.t(),
+          release: Mix.Release.t(),
+          rel_path: Path.t(),
+          trailer: Path.t()
+        }
+
   alias Bakeware.CPIO
 
   @doc false
+  @spec assemble(Mix.Release.t()) :: Mix.Release.t()
   def assemble(%Mix.Release{} = release) do
     %__MODULE__{name: release.name, rel_path: release.path, release: release}
     |> do_assemble()
@@ -24,9 +38,11 @@ defmodule Bakeware.Assembler do
   end
 
   @doc false
+  @spec assemble(Path.t(), String.t()) :: Mix.Release.t()
   def assemble(path, name) do
     %__MODULE__{name: name, rel_path: Path.expand(path)}
     |> do_assemble()
+    |> Map.get(:release)
   end
 
   defp create_paths(assembler) do

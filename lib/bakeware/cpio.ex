@@ -1,13 +1,17 @@
 defmodule Bakeware.CPIO do
   alias Bakeware.Assembler
 
+  @doc false
+
   @cpio_magic "070701"
 
+  @spec build(Assembler.t()) :: Assembler.t()
   def build(%Assembler{} = assembler) do
-    File.open(assembler.cpio, [:write, :append], fn cpio_fd ->
-      _ = append_files(assembler.rel_path, cpio_fd)
-      _ = append_trailer(cpio_fd)
-    end)
+    {:ok, :ok} =
+      File.open(assembler.cpio, [:write, :append], fn cpio_fd ->
+        :ok = append_files(assembler.rel_path, cpio_fd)
+        :ok = append_trailer(cpio_fd)
+      end)
 
     _ = maybe_compress(assembler)
 
@@ -15,14 +19,23 @@ defmodule Bakeware.CPIO do
   end
 
   defp append_files(release_path, cpio_fd) do
-    for path <- Path.wildcard("#{release_path}/**/*"), path != release_path do
-      file = file_details(path, release_path)
+    Path.wildcard("#{release_path}/**/*")
+    |> Enum.each(&append_file(release_path, &1, cpio_fd))
 
-      # write CPIO header
-      IO.binwrite(cpio_fd, build_header(file.mode, file.size, file.relative_path))
+    :ok
+  end
 
-      maybe_write_file_contents(file, cpio_fd)
-    end
+  defp append_file(release_path, path, cpio_fd) when release_path != path do
+    file = file_details(path, release_path)
+
+    # write CPIO header
+    :ok = IO.binwrite(cpio_fd, build_header(file.mode, file.size, file.relative_path))
+
+    maybe_write_file_contents(file, cpio_fd)
+  end
+
+  defp append_file(_release_path, _path, _cpio_fd) do
+    :ok
   end
 
   defp append_trailer(fd) do
@@ -30,7 +43,7 @@ defmodule Bakeware.CPIO do
   end
 
   defp build_header(mode, size, relative) do
-    namesize = byte_size(relative)
+    name_size = byte_size(relative)
 
     [
       @cpio_magic,
@@ -45,7 +58,7 @@ defmodule Bakeware.CPIO do
       zero(),
       zero(),
       zero(),
-      pad_hex(namesize + 1),
+      pad_hex(name_size + 1),
       zero(),
       relative,
       # Null terminator on path
@@ -75,9 +88,10 @@ defmodule Bakeware.CPIO do
 
   defp maybe_write_file_contents(file, cpio_fd) do
     # Read the file and append to CPIO
-    File.open(file.path, [:read], fn fd ->
-      IO.binwrite(cpio_fd, IO.binread(fd, :all))
-    end)
+    {:ok, :ok} =
+      File.open(file.path, [:read], fn fd ->
+        IO.binwrite(cpio_fd, IO.binread(fd, :all))
+      end)
   end
 
   defp pad_hex(i) do

@@ -18,6 +18,10 @@ defmodule Bakeware.MixProject do
       docs: docs(),
       package: package(),
       description: description(),
+      dialyzer: [
+        plt_add_apps: [:mix],
+        flags: [:unmatched_returns, :error_handling, :race_conditions, :underspecs]
+      ],
       preferred_cli_env: %{
         docs: :docs,
         "hex.publish": :docs,
@@ -38,6 +42,7 @@ defmodule Bakeware.MixProject do
 
   defp deps do
     [
+      {:dialyxir, "~> 1.1.0", only: :dev, runtime: false},
       {:elixir_make, "~> 0.6", runtime: false},
       {:ex_doc, "~> 0.22", only: :docs, runtime: false}
     ]
