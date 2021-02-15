@@ -85,7 +85,7 @@ int cache_validate(struct bakeware *bw)
         break;
     }
     if (cpio_extract_all(bw->reader, bw->fd, tmp_dir) < 0) {
-        bw_warn("CPIO extraction failed.");
+        bw_warnx("CPIO extraction failed.");
         return -1;
     }
 
