@@ -15,23 +15,23 @@ static void process_arguments(int argc, char *argv[])
 {
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--") == 0) {
-            argv[i] = 0;
+            argv[i] = "";
             break;
         } else if (strcmp(argv[i], "--bw-gc") == 0) {
             bw.run_gc = true;
-            argv[i] = 0;
+            argv[i] = "";
             break;
         } else if (strcmp(argv[i], "--bw-install") == 0) {
             bw.install_only = true;
-            argv[i] = 0;
+            argv[i] = "";
             break;
         } else if (strcmp(argv[i], "--bw-system-install") == 0) {
             bw_warnx("Ignoring --bw-system-install");
-            argv[i] = 0;
+            argv[i] = "";
             break;
         } else if (strcmp(argv[i], "--bw-info") == 0) {
             bw.print_info = true;
-            argv[i] = 0;
+            argv[i] = "";
             break;
         }
     }
@@ -45,7 +45,7 @@ static void update_environment(int argc, char *argv[])
     for (int i = 1; i < argc; i++) {
         const char *arg = argv[i];
 
-        if (*arg == 0)
+        if (*arg == '\0')
             continue;
 
         arg_index++;
