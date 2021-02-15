@@ -8,6 +8,7 @@
 #define CPIO_MAGIC 0x070701 // CPIO newc format
 #define CPIO_LAST  "TRAILER!!!"
 #define CPIO_HEADER_SIZE 110
+#define CPIO_MAX_NAME_LEN 512
 
 static int extract_file(read_contents reader, int fd, const char *base_path, const char *path, mode_t mode, size_t len)
 {
@@ -87,8 +88,8 @@ static ssize_t cpio_extract_one(read_contents reader, int fd, const char *dest_d
         return -1;
     }
 
-    char name[512];
-    if (reader(fd, name, namesize) != namesize) {
+    char name[CPIO_MAX_NAME_LEN];
+    if (namesize > CPIO_MAX_NAME_LEN - 1 || reader(fd, name, namesize) != namesize) {
         bw_warn("Error reading name");
         return -1;
     }
