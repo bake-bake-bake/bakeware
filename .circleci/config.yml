@@ -3,14 +3,14 @@ version: 2.1
 parameters:
   elixir:
     type: string
-    default: 1.11.2
+    default: 1.11.3
   erlang:
     type: string
-    default: 23.1.4
+    default: 23.2.4
 
 example_requires: &example_requires
   requires:
-    - elixir-1.11.2-otp-23.1.4
+    - elixir-1.11.3-otp-23.2.4
 
 commands:
   background_execute:
@@ -165,7 +165,7 @@ commands:
 executors:
   alpine: &alpine
     docker:
-      - image: hexpm/elixir:<< pipeline.parameters.elixir >>-erlang-<< pipeline.parameters.erlang >>-alpine-3.12.1
+      - image: hexpm/elixir:<< pipeline.parameters.elixir >>-erlang-<< pipeline.parameters.erlang >>-alpine-3.13.1
     environment:
       LC_ALL: C.UTF-8
       SUDO: true
@@ -176,7 +176,7 @@ executors:
     working_directory: ~/repo
   ubuntu: &ubuntu
     docker:
-      - image: hexpm/elixir:1.11.2-erlang-23.1.4-ubuntu-groovy-20201022.1
+      - image: hexpm/elixir:1.11.3-erlang-23.2.4-ubuntu-groovy-20201022.1
     environment:
       LC_ALL: C.UTF-8
       SUDO: true
@@ -314,8 +314,8 @@ workflows:
           matrix:
             parameters:
               os: [alpine]
-              elixir: [1.10.4, 1.11.2]
-              erlang: [23.1.4]
+              elixir: [1.10.4, 1.11.3]
+              erlang: [23.2.4]
 
       - test_script:
           <<: *example_requires
