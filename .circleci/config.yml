@@ -105,10 +105,21 @@ commands:
                   asdf plugin-update elixir
                   cd ~/.asdf/plugins/elixir && git checkout HEAD && cd -
             - run:
+                name: Prep precompiled OTP
+                command: |
+                  [ -d ~/.asdf/installs/erlang/23.1.5 ] && echo "precompiled OTP exists" || \
+                  echo "Downloading precompiled OTP" && \
+                  mkdir -p ~/.asdf/installs/erlang/ && \
+                  cd ~/.asdf/installs/erlang/ && \
+                  curl -LO https://github.com/wojtekmach/otp_builds/releases/download/OTP-23.1.5/OTP-23.1.5-macOS.tar.gz && \
+                  tar xzf OTP-23.1.5-macOS.tar.gz && \
+                  mv OTP-23.1.5 23.1.5 && \
+                  cd 23.1.5 && ./Install -sasl $PWD
+            - run:
                 name: install Erlang
                 command: |
-                  asdf install erlang <<pipeline.parameters.erlang>>
-                  asdf global erlang <<pipeline.parameters.erlang>>
+                  asdf reshim erlang 23.1.5
+                  asdf global erlang 23.1.5
             - run:
                 name: install Elixir
                 command: |
@@ -116,7 +127,7 @@ commands:
                   asdf global elixir <<pipeline.parameters.elixir>>
             - save_cache:
                 name: Save asdf cache
-                key: v1-asdf-v0.8.0-cache-<<parameters.os>>-erlang-<<pipeline.parameters.erlang>>-elixir-<<pipeline.parameters.elixir>>
+                key: v1-asdf-v0.8.0-cache-<<parameters.os>>-erlang-23.1.5-elixir-<<pipeline.parameters.elixir>>
                 paths:
                   - ~/.asdf
                   - ~/.asdf-vm
