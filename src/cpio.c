@@ -9,11 +9,6 @@
 #define CPIO_LAST  "TRAILER!!!"
 #define CPIO_HEADER_SIZE 110
 
-static unsigned int pad4(unsigned int x)
-{
-    return (x + 3) & ~3;
-}
-
 static int extract_file(read_contents reader, int fd, const char *base_path, const char *path, mode_t mode, size_t len)
 {
     char output_path[1024];
@@ -93,8 +88,7 @@ static ssize_t cpio_extract_one(read_contents reader, int fd, const char *dest_d
     }
 
     char name[512];
-    int padded_name = pad4(namesize + 2) - 2;  // The +2 is since the CPIO header is 110 bytes (not on a 4-byte boundary)
-    if (reader(fd, name, padded_name) != padded_name) {
+    if (reader(fd, name, namesize) != namesize) {
         bw_warn("Error reading name");
         return -1;
     }
@@ -109,14 +103,7 @@ static ssize_t cpio_extract_one(read_contents reader, int fd, const char *dest_d
     if (extract_file(reader, fd, dest_dir, name, mode, filesize) < 0)
         return -1;
 
-    unsigned int padded_filesize = pad4(filesize);
-    if (padded_filesize != filesize &&
-        reader(fd, buffer, padded_filesize - filesize) < 0) {
-        bw_warn("skip failed");
-        return -1;
-    }
-
-    return CPIO_HEADER_SIZE + padded_name + padded_filesize;
+    return CPIO_HEADER_SIZE + namesize + filesize;
 }
 
 int cpio_extract_all(read_contents reader, int fd, const char *dest_dir)

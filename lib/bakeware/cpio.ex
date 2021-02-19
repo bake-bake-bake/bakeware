@@ -49,8 +49,7 @@ defmodule Bakeware.CPIO do
       zero(),
       relative,
       # Null terminator on path
-      0,
-      pad_to_4(110 + namesize + 1)
+      0
     ]
   end
 
@@ -79,8 +78,6 @@ defmodule Bakeware.CPIO do
     File.open(file.path, [:read], fn fd ->
       IO.binwrite(cpio_fd, IO.binread(fd, :all))
     end)
-
-    IO.binwrite(cpio_fd, pad_to_4(file.size))
   end
 
   defp pad_hex(i) do
@@ -88,15 +85,6 @@ defmodule Bakeware.CPIO do
     pad_size = 8 - byte_size(hex)
 
     :binary.copy("0", pad_size) <> hex
-  end
-
-  defp pad_to_4(length) do
-    case Integer.mod(length, 4) do
-      0 -> <<>>
-      1 -> <<0, 0, 0>>
-      2 -> <<0, 0>>
-      3 -> <<0>>
-    end
   end
 
   defp zero(), do: "00000000"
