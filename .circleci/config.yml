@@ -23,7 +23,7 @@ commands:
           command: _build/prod/rel/bakeware/<<parameters.example>> > /tmp/output
           background: true
           working_directory: examples/<<parameters.example>>
-  
+
   execute_example:
     parameters:
       example:
@@ -160,7 +160,7 @@ commands:
           paths:
             - <<parameters.working_directory>>/_build
             - <<parameters.working_directory>>/deps
-  
+
   validate_output:
     parameters:
       example:
@@ -227,7 +227,7 @@ jobs:
       - run: mix test
       - run: mix docs
       - run: mix hex.build
-      # - run: mix dialyzer
+      - run: mix dialyzer
       - put_cache:
           os: <<parameters.os>>
 
@@ -256,7 +256,7 @@ jobs:
             - validate_output:
                 example: iex_prompt
                 grep: Interactive Elixir
-  
+
   test_scenic:
     <<: *example_env
     steps:
@@ -284,7 +284,7 @@ jobs:
             - validate_output:
                 example: scenic_app
                 grep: Starting ScenicApp
-  
+
   test_phoenix:
     <<: *example_env
     steps:
@@ -306,7 +306,7 @@ jobs:
                   - run:
                       name: Install node
                       command: apt install -y nodejs npm
-            - run: 
+            - run:
                 command: mix setup
                 working_directory: examples/phoenix_app
             - run:
