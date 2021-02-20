@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.5
+
+Bug fixes:
+
+* Fix an archive creation error that would result in an archive that would fail
+  to unpack.
+* Fix a segfault when passing an internal command line parameter to the archive
+
 ## v0.1.4
 
 This release doesn't change much externally. Internally, we've started cleaning

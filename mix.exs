@@ -1,7 +1,7 @@
 defmodule Bakeware.MixProject do
   use Mix.Project
 
-  @version "0.1.4"
+  @version "0.1.5"
   @source_url "https://github.com/bake-bake-bake/bakeware"
 
   def project do
