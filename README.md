@@ -75,24 +75,6 @@ above):
 ```
 <!-- ASSEMBLE !-->
 
-### Mix task
-
-Bakeware also supports manually assembling the executable via `mix bakeware.assemble`
-
-<!-- ASSEMBLE_TASK !-->
-Generally, it is expected that you integrate assembly as a Mix release
-step (see `Bakeware.assemble/1`)
-
-However, this task provides the ability to manually assemble the Bakeware executable
-binary either for the current project, or for other specified release directories.
-
-Supported options:
-
-* `--name` - Name to use for the binary. Defaults to the app name
-* `--path` - path to release directory. Defaults to release directory
-  of current Mix project
-<!-- ASSEMBLE_TASK !-->
-
 ### Scripting
 
 <!-- SCRIPT !-->
