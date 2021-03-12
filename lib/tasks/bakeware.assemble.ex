@@ -1,4 +1,6 @@
 defmodule Mix.Tasks.Bakeware.Assemble do
+  @moduledoc false
+
   use Mix.Task
 
   @switches [
