@@ -161,6 +161,33 @@ audience, it's useful to build on a system with older library versions. Python
 has a useful pointers in their [packaging
 guides](https://packaging.python.org/guides/packaging-binary-extensions/#building-binary-extensions).
 
+### Static Compiling OpenSSL into Erlang Distribution
+
+Sometimes wierd SSL state bugs arise with a release when openssl is not statically compiled in.
+Your affected by these ssl issues if you see things like a ssl connection being established but
+after sending the first packet the remote end drops you. Attached is a Dockerfile that can be 
+built with Podman and used to build your baked released.  
+  
+```
+#Edit the versions of libraries in Dockerfile
+ENV SSL_VERSION=1.1.1j
+ENV OTP_VERSION=OTP-23.1.4
+ENV ELIXIR_VERSION=v1.11.3
+
+#Build erlang with static openssl
+podman build --tag mybuilder DockerfileFolder/
+
+#Bake your release
+podman run -it --rm -v .:/root/myproject --entrypoint bash mybuilder -c "cd /root/myproject && ./build.sh"
+
+#Build.sh
+export MIX_ENV=prod
+rm -rf _build
+mix deps.get
+mix release
+cp _build/prod/rel/bakeware/myproject .
+```
+
 ## Reference material
 
 ### Command-line arguments
