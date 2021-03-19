@@ -36,7 +36,8 @@ defmodule IExPrompt.MixProject do
       cookie: "#{@app}_cookie",
       quiet: true,
       steps: [:assemble, &Bakeware.assemble/1],
-      strip_beams: Mix.env() == :prod
+      strip_beams: Mix.env() == :prod,
+      start_command: "start_iex"
     ]
   end
 end
