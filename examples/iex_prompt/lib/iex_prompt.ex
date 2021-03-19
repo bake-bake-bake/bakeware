@@ -2,14 +2,9 @@ defmodule IExPrompt do
   use Bakeware.Script
 
   def main(_) do
-    pid = IEx.start()
-    Process.group_leader(self(), pid)
-    Process.monitor(pid)
-
+    # Wait forever
     receive do
-      _ ->
-        IO.warn("IEx Died")
-        :ok
+      _ -> :ok
     end
   end
 end
