@@ -164,7 +164,7 @@ guides](https://packaging.python.org/guides/packaging-binary-extensions/#buildin
 ### Static Compiling OpenSSL into Erlang Distribution
 
 Sometimes wierd SSL state bugs arise with a release when openssl is not statically compiled in.
-Your affected by these ssl issues if you see things like a ssl connection being established but
+You're affected by these ssl issues if you see things like an SSL connection being established but
 after sending the first packet the remote end drops you. Attached is a Dockerfile that can be 
 built with Podman and used to build your baked released.  
   
