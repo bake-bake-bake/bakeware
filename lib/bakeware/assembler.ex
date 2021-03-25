@@ -155,6 +155,8 @@ defmodule Bakeware.Assembler do
           true
       end
 
+    check_invalid_option!(assembler.release, :compression_level)
+
     compression_level = assembler.release.options[:bakeware][:compression_level] || 15
 
     if compression_level not in 1..19 do
@@ -169,6 +171,7 @@ defmodule Bakeware.Assembler do
   end
 
   defp set_start_command(assembler) do
+    check_invalid_option!(assembler.release, :start_command)
     command = assembler.release.options[:bakeware][:start_command] || "start"
     cmd_len = byte_size(command)
 
@@ -183,5 +186,26 @@ defmodule Bakeware.Assembler do
     end
 
     %{assembler | start_command: command}
+  end
+
+  defp check_invalid_option!(release, option) do
+    if value = release.options[option] do
+      Mix.raise("""
+      [Bakeware] setting :#{option} in the release options outside of the :bakeware key is no longer supported.
+
+      Please adjust your release options in mix.exs to continue:
+
+        def release do
+          [
+            ...
+            steps: [&Bakeware.assemble/1, :assemble],
+            bakeware: [#{option}: #{inspect(value)}]
+            ...
+          ]
+        end
+      """)
+    end
+
+    :ok
   end
 end
