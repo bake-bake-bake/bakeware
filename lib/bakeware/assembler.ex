@@ -155,7 +155,7 @@ defmodule Bakeware.Assembler do
           true
       end
 
-    compression_level = assembler.release.options[:compression_level] || 15
+    compression_level = assembler.release.options[:bakeware][:compression_level] || 15
 
     if compression_level not in 1..19 do
       Mix.raise(
@@ -169,7 +169,7 @@ defmodule Bakeware.Assembler do
   end
 
   defp set_start_command(assembler) do
-    command = assembler.release.options[:start_command] || "start"
+    command = assembler.release.options[:bakeware][:start_command] || "start"
     cmd_len = byte_size(command)
 
     if cmd_len > 12 do

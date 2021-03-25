@@ -37,7 +37,7 @@ defmodule RelTest.MixProject do
       quiet: true,
       steps: [:assemble, &Bakeware.assemble/1],
       strip_beams: Mix.env() == :prod,
-      compression_level: 1
+      bakeware: [compression_level: 1]
     ]
   end
 end
