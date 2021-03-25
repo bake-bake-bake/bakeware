@@ -37,7 +37,7 @@ defmodule IExPrompt.MixProject do
       quiet: true,
       steps: [:assemble, &Bakeware.assemble/1],
       strip_beams: [keep: ["Docs"]],
-      start_command: "start_iex"
+      bakeware: [start_command: "start_iex"]
     ]
   end
 end

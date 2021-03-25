@@ -66,16 +66,29 @@ def release do
     ]
   ]
 end
+```
 
-Bakeware adds the following options (these are at the same level as `:steps`
-above):
+Bakeware adds the following options in the release scoped to `:bakeware` key:
 
 * `:compression_level` - Zstandard compression level (1 to 19) where higher
   numbers generally result in better compression, but are slower to build
 * `:start_command` - The start script command to run when invoked. This defaults
   to `"start"`, but can be changed to `"start_iex"`, for example, if you want a
   prompt.
+
+```elixir
+def release do
+  [
+    demo: [
+      bakeware: [
+        compression_level: 1,
+        start_command: "daemon"
+      ]
+    ]
+  ]
+end
 ```
+
 <!-- ASSEMBLE !-->
 
 ### Scripting
