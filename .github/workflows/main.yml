@@ -1,0 +1,100 @@
+name: CI
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+on: [pull_request, push]
+
+jobs:
+  linux:
+    name: Test on Ubuntu (Elixir ${{ matrix.elixir_version }}, OTP ${{ matrix.otp_version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        elixir_version: ['1.10.3', '1.11.3']
+        otp_version: ['23.3.1']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir_version }}
+          otp-version: ${{ matrix.otp_version }}
+      - name: Restore deps and _build
+        uses: actions/cache@v2
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ matrix.elixir_version }}-${{ matrix.otp_version }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+      - name: Restore plts
+        uses: actions/cache@v2
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-dialyzer-${{ matrix.elixir_version }}-${{ matrix.otp_version }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+      - run: mix deps.get
+      - run: MIX_ENV=test mix compile --warnings-as-errors
+      - run: mix test
+      - name: Extra checks
+        if: ${{ contains(matrix.elixir_version, '1.11') }}
+        run: |
+          mix format --check-formatted
+          mix dialyzer --halt-exit-status
+
+  macos:
+    name: Test on MacOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Homebrew packages
+        run: brew install elixir zstd
+      - name: Restore deps and _build
+        uses: actions/cache@v2
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+      - run: mix local.hex --force
+      - run: mix deps.get
+      - run: mix local.rebar --force
+      - run: MIX_ENV=test mix compile --warnings-as-errors
+      - run: mix test
+
+  windows:
+    name: Test on Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Restore chocolatey
+        uses: actions/cache@v2
+        with:
+          path: C:\Users\runneradmin\AppData\Local\Temp\chocolatey
+          key: ${{ runner.os }}-chocolatey-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-chocolatey-
+      - name: Install elixir, zstd, make and mingw
+        run: |
+          cinst elixir zstandard make mingw --no-progress
+          set MIX_ENV=test
+          echo "C:\ProgramData\chocolatey\lib\Elixir\bin;C:\ProgramData\chocolatey\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Build
+        env:
+          MAKE: make
+          CC: gcc
+        run: |
+          echo "$PATH"
+          mix local.hex --force
+          mix deps.get
+          mix local.rebar --force
+          mix compile --warnings-as-errors
+      - name: Test
+        run: mix test
+
