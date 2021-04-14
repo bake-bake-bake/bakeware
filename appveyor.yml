@@ -1,0 +1,16 @@
+version: build{build}
+
+install:
+  - cinst elixir zstandard make mingw
+  - refreshenv
+
+environment:
+  MAKE: make
+  CC: gcc
+
+build_script:
+  - mix local.hex --force
+  - mix deps.get
+  - mix compile
+  - mix test
+
