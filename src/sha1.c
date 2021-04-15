@@ -42,7 +42,7 @@ A million repetitions of "a"
 
 #if defined(vax) || defined(ns32000) || defined(sun386) || defined(__i386__) || \
     defined(MIPSEL) || defined(_MIPSEL) || defined(BIT_ZERO_ON_RIGHT) || \
-    defined(__alpha__) || defined(__alpha)
+    defined(__alpha__) || defined(__alpha) || defined(_WIN32) || defined(_WIN64)
 #define BYTE_ORDER	LITTLE_ENDIAN
 #endif
 

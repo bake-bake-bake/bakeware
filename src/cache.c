@@ -1,11 +1,11 @@
-#include "bakeware.h"
-
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include "bakeware.h"
 
 void cache_init(struct bakeware *bw)
 {
@@ -57,9 +57,13 @@ int cache_validate(struct bakeware *bw)
     // Expand to a temporary directory
     char tmp_dir_template[256+64];
     snprintf(tmp_dir_template, sizeof(tmp_dir_template), "%s/XXXXXX", bw->cache_dir_tmp);
-    char *tmp_dir = mkdtemp(tmp_dir_template);
+    char *tmp_dir = mktemp(tmp_dir_template);
     if (tmp_dir == NULL) {
         bw_warn("Can't create expand archive under '%s'", bw->cache_dir_base);
+        return -1;
+    }
+    if (mkdir(tmp_dir, 0755) < 0 && errno != EEXIST) {
+        bw_warn("Error creating directory %s??", tmp_dir);
         return -1;
     }
 

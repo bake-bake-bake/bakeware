@@ -1,4 +1,3 @@
-#include "bakeware.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -8,6 +7,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+#include "bakeware.h"
 
 struct bakeware bw;
 
@@ -105,7 +106,7 @@ int main(int argc, char *argv[])
 
     bw_debug("starting '%s' (cachedir=%s)...", bw.path, bw.cache_dir_base);
 
-    bw.fd = open(bw.path, O_RDONLY);
+    bw.fd = open(bw.path, O_RDONLY | O_BINARY);
     if (bw.fd < 0)
         bw_fatal("Can't open '%s'", bw.path);
 

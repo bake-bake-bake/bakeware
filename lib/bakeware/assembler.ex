@@ -58,7 +58,18 @@ defmodule Bakeware.Assembler do
       | path: bake_path,
         cpio: Path.join(bake_path, "#{tmp_name}.cpio"),
         launcher: Application.app_dir(:bakeware, ["launcher", "launcher"]),
-        output: Path.join(bake_path, "#{assembler.name}"),
+        output:
+          Path.join(
+            bake_path,
+            "#{assembler.name}#{
+              case :os.type(),
+                do:
+                  (
+                    {:win32, _} -> ".exe"
+                    _ -> ""
+                  )
+            }"
+          ),
         trailer: Path.join(bake_path, "#{tmp_name}.trailer")
     }
   end
@@ -73,6 +84,7 @@ defmodule Bakeware.Assembler do
     |> set_compression()
     |> set_start_command()
     |> add_start_script()
+    |> add_start_batch()
     |> CPIO.build()
     |> build_trailer()
     |> concat_files()
@@ -90,6 +102,24 @@ defmodule Bakeware.Assembler do
     ROOT="$(cd "$(dirname "$SELF")" && pwd -P)"
 
     $ROOT/#{start_script_path} $1
+    """
+
+    File.write!(start_path, script)
+    File.chmod!(start_path, 0o755)
+
+    assembler
+  end
+
+  defp add_start_batch(assembler) do
+    start_path = Path.join(assembler.rel_path, "start.bat")
+    start_script_path = "bin/#{assembler.name}"
+
+    script = """
+    @echo off
+    setlocal enabledelayedexpansion
+
+    set ROOT=%~dp0
+    %ROOT%/#{start_script_path} %1
     """
 
     File.write!(start_path, script)

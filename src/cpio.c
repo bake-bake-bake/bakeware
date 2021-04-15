@@ -1,9 +1,10 @@
-#include "bakeware.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+
+#include "bakeware.h"
 
 #define CPIO_MAGIC 0x070701 // CPIO newc format
 #define CPIO_LAST  "TRAILER!!!"

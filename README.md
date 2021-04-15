@@ -191,6 +191,16 @@ mix release
 cp _build/prod/rel/bakeware/myproject .
 ```
 
+### Building on Windows
+
+Bakeware is tested to work in mingw environment on Windows 8 and 10. In order to setup the environment follow these steps:
+
+* Install [`chocolatey`](https://chocolatey.org/install)
+* Install elixir, zstandard, make, and mingw using chocolatey: `choco install -y elixir zstandard make mingw`
+* We need to change the default `nmake` used by `elixir_make` for Windows to `make` that we just installed: `export MAKE=make`
+* Export the CC variable as well: `export CC=gcc`
+* Now everything is set and the final standalone executable should get built with`mix release`
+
 ## Reference material
 
 ### Command-line arguments

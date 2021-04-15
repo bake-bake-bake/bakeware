@@ -114,4 +114,12 @@ struct bakeware
     char start_command[BAKEWARE_MAX_START_COMMAND_LEN + 1];
 };
 
+#if (defined(_WIN32) || defined(_WIN64))
+#define mkdir(A, B) mkdir(A)
+#endif
+
+#if (!defined(_WIN32) && !defined(_WIN64))
+#define O_BINARY 0
+#endif
+
 #endif
