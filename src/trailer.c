@@ -1,9 +1,9 @@
-#include "bakeware.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include "bakeware.h"
 
 #define BW_TRAILER_V1_LENGTH          48
 #define BW_TRAILER_V1_MAGIC           (BW_TRAILER_V1_LENGTH - 4)

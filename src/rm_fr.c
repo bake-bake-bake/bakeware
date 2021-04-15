@@ -1,9 +1,9 @@
-#include "bakeware.h"
-
 #include <ftw.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>
+
+#include "bakeware.h"
 
 // OPEN_MAX isn't defined on some systems. Note that many nftw man pages say
 // that the max open file handles parameter is ignored, but it's definitely not

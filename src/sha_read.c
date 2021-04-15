@@ -1,7 +1,7 @@
+#include <unistd.h>
+
 #include "bakeware.h"
 #include "sha1.h"
-
-#include <unistd.h>
 
 void SHA1_Init(SHA1_CTX* context);
 void SHA1_Update(SHA1_CTX* context, const uint8_t* data, const size_t len);

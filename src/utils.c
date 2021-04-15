@@ -105,7 +105,7 @@ void bw_cache_directory(char *path, size_t len)
         return;
     } else {
 #if defined (_WIN64) || defined(_WIN32)
-#error Implement
+    snprintf(path, len, "%s\\AppData\\Local\\Bakeware", getenv("userprofile"));
 #elif __APPLE__
     snprintf(path, len, "%s//Library/Caches/Bakeware", getenv("HOME"));
 #elif (__linux || __unix || __posix)

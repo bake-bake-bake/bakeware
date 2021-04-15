@@ -1,7 +1,8 @@
-#include "bakeware.h"
-#include "zstd/lib/zstd.h"
 #include <unistd.h>
 #include <string.h>
+
+#include "bakeware.h"
+#include "zstd/lib/zstd.h"
 
 struct unzstd_info
 {
