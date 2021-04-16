@@ -85,16 +85,15 @@ jobs:
           cinst elixir zstandard make mingw --no-progress
           set MIX_ENV=test
           echo "C:\ProgramData\chocolatey\lib\Elixir\bin;C:\ProgramData\chocolatey\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - name: Build
+      - name: Build and test
         env:
           MAKE: make
           CC: gcc
         run: |
           echo "$PATH"
           mix local.hex --force
-          mix deps.get
           mix local.rebar --force
+          mix deps.get
           mix compile --warnings-as-errors
-      - name: Test
-        run: mix test
+          mix test
 
