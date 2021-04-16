@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.2.0
+
+Breaking Changes:
+
+* Applicable release options in `mix.exs` are now scoped to a `:bakeware` key.
+  If you were setting `:compression_level` previously, you will need to update
+  you setting.
+
+Enhancements:
+
+* Windows Support! (Thanks @kritarthh :tada:) - See [Building on Windows](https://hexdocs.pm/bakeware/readme.html#building-on-windows)
+  for more info
+* Adds the `:start_command` option to the bakeware `mix` release options
+  which allows you to start the bakeware executable with the same commands
+  supported by `Mix.Release`. See the bakeware iex_prompt example for how
+  this is used so that the IEx prompt supports line editing.
+* Adds the `--bw-command`  option when running the executable. See [`mix release` command options](https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-bin-release_name-commands).
+* Instructions added for compiling static OpenSSL when needed (thanks @vans163)
+
+Bug Fixes:
+
+* Removes `mix bakeware.assemble` task which is unused and broken (Thanks @christhekeele).
+  Please use `mix release` for the same effect
+
 ## v0.1.5
 
 Bug fixes:
