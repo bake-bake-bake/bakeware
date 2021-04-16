@@ -47,6 +47,17 @@ defmodule Bakeware.Assembler do
     |> Map.get(:release)
   end
 
+  @doc false
+  @spec executable_name(term()) :: binary()
+  def executable_name(base_name) do
+    string_base_name = to_string(base_name)
+
+    case :os.type() do
+      {:win32, _} -> string_base_name <> ".exe"
+      _ -> string_base_name
+    end
+  end
+
   defp create_paths(assembler) do
     bake_path = Path.dirname(assembler.rel_path) |> Path.join("bakeware")
     tmp_name = :crypto.strong_rand_bytes(16) |> Base.encode16()
@@ -58,18 +69,7 @@ defmodule Bakeware.Assembler do
       | path: bake_path,
         cpio: Path.join(bake_path, "#{tmp_name}.cpio"),
         launcher: Application.app_dir(:bakeware, ["launcher", "launcher"]),
-        output:
-          Path.join(
-            bake_path,
-            "#{assembler.name}#{
-              case :os.type(),
-                do:
-                  (
-                    {:win32, _} -> ".exe"
-                    _ -> ""
-                  )
-            }"
-          ),
+        output: Path.join(bake_path, executable_name(assembler.name)),
         trailer: Path.join(bake_path, "#{tmp_name}.trailer")
     }
   end

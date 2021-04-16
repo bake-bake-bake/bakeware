@@ -12,14 +12,7 @@ defmodule BakewareTest do
                        "prod",
                        "rel",
                        "bakeware",
-                       "rel_test#{
-                         case :os.type(),
-                           do:
-                             (
-                               {:win32, _} -> ".exe"
-                               _ -> ""
-                             )
-                       }"
+                       Bakeware.Assembler.executable_name("rel_test")
                      ])
                    )
 
