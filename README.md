@@ -74,7 +74,8 @@ Bakeware adds the following options in the release scoped to `:bakeware` key:
   numbers generally result in better compression, but are slower to build
 * `:start_command` - The start script command to run when invoked. This defaults
   to `"start"`, but can be changed to `"start_iex"`, for example, if you want a
-  prompt.
+  prompt. See [`Mix.Release`](https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-bin-release_name-commands)
+  for supported commands.
 
 ```elixir
 def release do
@@ -226,6 +227,7 @@ The following arguments may be passed:
 * `--bw-gc` - This cleans up all unused entries in the cache (NOT IMPLEMENTED)
 * `--bw-install` - Unpack the application to the cache only. Do not run.
 * `--bw-system-install` - Install to a system-wide location (NOT IMPLEMENTED)
+* `--bw-command` - use the specified [`Mix.Release` command](https://hexdocs.pm/mix/Mix.Tasks.Release.html#module-bin-release_name-commands) when running the executable
 
 ### Environment variables
 
