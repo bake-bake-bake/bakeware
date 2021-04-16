@@ -12,7 +12,14 @@ defmodule BakewareTest do
                        "prod",
                        "rel",
                        "bakeware",
-                       "rel_test"
+                       "rel_test#{
+                         case :os.type(),
+                           do:
+                             (
+                               {:win32, _} -> ".exe"
+                               _ -> ""
+                             )
+                       }"
                      ])
                    )
 
@@ -73,7 +80,12 @@ defmodule BakewareTest do
     # Check that index was created properly
     assert length(index_files) == 1
     [index_file] = index_files
-    src_path = File.read!(Path.join([tmp_dir, ".index", index_file])) |> String.trim()
+
+    src_path =
+      File.read!(Path.join([tmp_dir, ".index", index_file]))
+      |> String.trim()
+      |> String.replace("\\", "/")
+
     assert src_path == @rel_test_binary
 
     # Check the that the expansion looks reasonable
@@ -160,7 +172,7 @@ defmodule BakewareTest do
       System.cmd(command_test_binary, [], env: [{"BAKEWARE_CACHE", Path.absname(tmp_dir)}])
 
     # See the command test's mix.exs file to see that it runs "version" by default
-    assert result == "command_test 0.1.0\n"
+    assert String.trim(result) == "command_test 0.1.0"
   end
 
   @tag :tmp_dir
@@ -172,6 +184,6 @@ defmodule BakewareTest do
         env: [{"BAKEWARE_CACHE", Path.absname(tmp_dir)}]
       )
 
-    assert result == "rel_test 0.1.0\n"
+    assert String.trim(result) == "rel_test 0.1.0"
   end
 end
