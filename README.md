@@ -211,9 +211,35 @@ Bakeware is tested to work in mingw environment on Windows 8 and 10. In order to
 
 * Install [`chocolatey`](https://chocolatey.org/install)
 * Install elixir, zstandard, make, and mingw using chocolatey: `choco install -y elixir zstandard make mingw`
-* We need to change the default `nmake` used by `elixir_make` for Windows to `make` that we just installed: `export MAKE=make`
-* Export the CC variable as well: `export CC=gcc`
-* Now everything is set and the final standalone executable should get built with`mix release`
+* Change the default `MAKE` environment variable used by `elixir_make` from `nmake` to `make` (set it permanently to get rid of the errors in VSCode)
+* Set the CC environment variable
+* Build the release
+
+#### PowerShell
+
+```powershell
+$env:MAKE="make"
+$env:CC="gcc"
+mix release
+```
+
+#### Command Prompt
+
+```
+set MAKE=make
+set CC=gcc
+mix release
+```
+
+#### MinGW
+
+Note: after building the release in MinGW, you need to switch back to PowerShell/CMD to run the application
+
+```bash
+export MAKE=make
+export CC=gcc
+mix release
+```
 
 ## Reference material
 
