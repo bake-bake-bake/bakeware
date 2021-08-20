@@ -66,7 +66,12 @@ $(PREFIX)/launcher: $(BAKEWARE_OBJECTS) $(ZSTD_OBJECTS)
 	strip $@
 
 $(PREFIX) $(BUILD) $(ZSTD_BUILD_DIRS):
-	mkdir -p $@
+	ifeq ($(OS),Windows_NT)
+		mkdir $@
+	else
+		mkdir -p $@
+	endif
+	
 
 clean:
 	$(RM) $(PREFIX)/launcher \
