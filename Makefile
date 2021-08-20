@@ -65,13 +65,13 @@ $(PREFIX)/launcher: $(BAKEWARE_OBJECTS) $(ZSTD_OBJECTS)
 	$(CC) $^ $(LDFLAGS) $(OUTPUT_FLAGS)$@
 	strip $@
 
+ifeq ($(OS),Windows_NT)
 $(PREFIX) $(BUILD) $(ZSTD_BUILD_DIRS):
-	ifeq ($(OS),Windows_NT)
-		mkdir $@
-	else
-		mkdir -p $@
-	endif
-	
+	mkdir "$@"
+else
+$(PREFIX) $(BUILD) $(ZSTD_BUILD_DIRS):
+	mkdir -p $@
+endif
 
 clean:
 	$(RM) $(PREFIX)/launcher \
