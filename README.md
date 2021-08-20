@@ -143,6 +143,7 @@ do:
 1. Make sure `zstd` is installed to enable compression during assembly:
   * **MacOS**: `brew install zstd`
   * **Ubuntu**: `apt-get install zstd`
+  * **Windows**: `choco install zstandard`
 2. Build using `MIX_ENV=prod`. The default is `MIX_ENV=dev`, so be sure that the
    environment variable is set.
 3. Run `rm -fr _build` and then `mix release`. During development cruft builds
