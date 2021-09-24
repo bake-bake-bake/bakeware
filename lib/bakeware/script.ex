@@ -2,12 +2,7 @@ defmodule Bakeware.Script do
   @moduledoc """
   Helper to generate a script that takes command-line arguments
 
-  #{
-    File.read!("README.md")
-    |> String.split(~r/<!-- SCRIPT !-->/)
-    |> Enum.drop(1)
-    |> hd()
-  }
+  #{File.read!("README.md") |> String.split(~r/<!-- SCRIPT !-->/) |> Enum.drop(1) |> hd()}
   """
 
   @type args :: [String.t()]
@@ -42,9 +37,7 @@ defmodule Bakeware.Script do
       catch
         error, reason ->
           IO.warn(
-            "Caught exception in #{__MODULE__}.main/1: #{inspect(error)} => #{
-              inspect(reason, pretty: true)
-            }",
+            "Caught exception in #{__MODULE__}.main/1: #{inspect(error)} => #{inspect(reason, pretty: true)}",
             __STACKTRACE__
           )
 

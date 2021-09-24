@@ -199,9 +199,7 @@ defmodule Bakeware.Assembler do
 
     if compression_level not in 1..19 do
       Mix.raise(
-        "[Bakeware] invalid zstd compression level - Must be an integer 1-19. Got: #{
-          inspect(compression_level)
-        }"
+        "[Bakeware] invalid zstd compression level - Must be an integer 1-19. Got: #{inspect(compression_level)}"
       )
     end
 
