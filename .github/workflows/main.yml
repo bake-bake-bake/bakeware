@@ -92,6 +92,7 @@ jobs:
         env:
           MAKE: make
           CC: gcc
+        shell: cmd
         run: |
           echo "$PATH"
           mix local.hex --force
