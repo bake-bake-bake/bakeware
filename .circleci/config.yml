@@ -3,14 +3,14 @@ version: 2.1
 parameters:
   elixir:
     type: string
-    default: 1.11.3
+    default: "1.12.3"
   erlang:
     type: string
-    default: 23.2.4
+    default: "24.1"
 
 example_requires: &example_requires
   requires:
-    - elixir-1.11.3-otp-23.2.4
+    # - elixir-1.12.3-otp-24.1
 
 commands:
   background_execute:
@@ -178,7 +178,7 @@ commands:
 executors:
   alpine: &alpine
     docker:
-      - image: hexpm/elixir:<< pipeline.parameters.elixir >>-erlang-<< pipeline.parameters.erlang >>-alpine-3.13.1
+      - image: hexpm/elixir:<< pipeline.parameters.elixir >>-erlang-<< pipeline.parameters.erlang >>-alpine-3.14.0
     environment:
       LC_ALL: C.UTF-8
       SUDO: true
@@ -189,7 +189,7 @@ executors:
     working_directory: ~/repo
   ubuntu: &ubuntu
     docker:
-      - image: hexpm/elixir:1.11.3-erlang-23.2.4-ubuntu-groovy-20201022.1
+      - image: hexpm/elixir:1.12.3-erlang-24.1-ubuntu-groovy-20210325
     environment:
       LC_ALL: C.UTF-8
       SUDO: true
@@ -298,7 +298,7 @@ jobs:
                 steps:
                   - run:
                       name: Install node
-                      command: apk add nodejs nodejs-npm
+                      command: apk add nodejs npm
             - when:
                 condition:
                   equal: [ubuntu, << parameters.os >>]
@@ -322,16 +322,8 @@ jobs:
 workflows:
   build_test:
     jobs:
-      - build:
-          name: elixir-<<matrix.elixir>>-otp-<<matrix.erlang>>
-          matrix:
-            parameters:
-              os: [alpine]
-              elixir: [1.10.4, 1.11.3]
-              erlang: [23.2.4]
-
       - test_script:
-          <<: *example_requires
+          # <<: *example_requires
           name: test simple_app <<matrix.os>>
           example: simple_app
           matrix:
@@ -340,16 +332,16 @@ workflows:
               os: [mac, alpine, ubuntu]
 
       - test_script:
-          <<: *example_requires
+          # <<: *example_requires
           name: test simple_script <<matrix.os>>
           matrix:
             parameters:
-              example: [simple_app]
+              example: [simple_script]
               args: [howdy! --upcase]
               os: [mac, alpine, ubuntu]
 
       - test_script:
-          <<: *example_requires
+          # <<: *example_requires
           name: test nif_script <<matrix.os>>
           matrix:
             parameters:
@@ -358,21 +350,21 @@ workflows:
               os: [alpine, mac, ubuntu]
 
       - test_iex:
-          <<: *example_requires
+          # <<: *example_requires
           name: test iex_prompt <<matrix.os>>
           matrix:
             parameters:
               os: [alpine, mac, ubuntu]
 
       - test_scenic:
-          <<: *example_requires
+          # <<: *example_requires
           name: test scenic_app <<matrix.os>>
           matrix:
             parameters:
               os: [alpine, ubuntu]
 
       - test_phoenix:
-          <<: *example_requires
+          # <<: *example_requires
           name: test phoenix_app <<matrix.os>>
           matrix:
             parameters:
