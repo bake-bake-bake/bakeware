@@ -12,8 +12,11 @@ jobs:
 
     strategy:
       matrix:
-        elixir_version: ['1.10.3', '1.11.3']
-        otp_version: ['23.3.1']
+        elixir_version: ['1.10.4', '1.11.4', '1.12.3']
+        otp_version: ['23.3.4.7', '24.1']
+        exclude:
+          - elixir_version: '1.10.4'
+            otp_version: '24.1'
 
     steps:
       - name: Checkout
@@ -39,7 +42,7 @@ jobs:
       - run: MIX_ENV=test mix compile --warnings-as-errors
       - run: mix test
       - name: Extra checks
-        if: ${{ contains(matrix.elixir_version, '1.11') }}
+        if: ${{ contains(matrix.elixir_version, '1.12') }}
         run: |
           mix format --check-formatted
           mix dialyzer --halt-exit-status
@@ -96,4 +99,3 @@ jobs:
           mix deps.get
           mix compile --warnings-as-errors
           mix test
-
