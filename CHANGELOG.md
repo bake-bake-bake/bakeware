@@ -1,6 +1,10 @@
 # Changelog
 
 ## v0.2.0
+### Fixed
+- Compilation for Windows MinGW users
+
+## v0.2.0
 
 Breaking Changes:
 
