@@ -159,17 +159,18 @@ defmodule Bakeware.Assembler do
   end
 
   defp concat_files(assembler) do
-    case :os.type() do
-      {:win32, :nt} ->
-        :os.cmd(
-          'type "#{win_path(assembler.launcher)}" "#{win_path(assembler.cpio)}" "#{win_path(assembler.trailer)}" > "#{win_path(assembler.output)}"'
-        )
+    _ =
+      case :os.type() do
+        {:win32, :nt} ->
+          :os.cmd(
+            'type "#{win_path(assembler.launcher)}" "#{win_path(assembler.cpio)}" "#{win_path(assembler.trailer)}" > "#{win_path(assembler.output)}"'
+          )
 
-      _ ->
-        :os.cmd(
-          'cat #{assembler.launcher} #{assembler.cpio} #{assembler.trailer} > #{assembler.output}'
-        )
-    end
+        _ ->
+          :os.cmd(
+            'cat #{assembler.launcher} #{assembler.cpio} #{assembler.trailer} > #{assembler.output}'
+          )
+      end
 
     File.chmod!(assembler.output, 0o755)
     assembler
