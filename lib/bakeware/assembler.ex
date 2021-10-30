@@ -118,7 +118,7 @@ defmodule Bakeware.Assembler do
     @echo off
     setlocal enabledelayedexpansion
 
-    set ROOT=%~dp0
+    set ROOT="%~dp0"
     %ROOT%/#{start_script_path} %1
     """
 
