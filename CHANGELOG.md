@@ -1,7 +1,16 @@
 # Changelog
 
-## v0.2.0
+## v0.2.2
+
 ### Fixed
+
+- Allow spaces in bakeware path within start.bat
+- Fix windows path when compressing
+
+## v0.2.1
+
+### Fixed
+
 - Compilation for Windows MinGW users
 
 ## v0.2.0
