@@ -76,27 +76,67 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Restore chocolatey
+      - name: Cache scoop downloads
         uses: actions/cache@v2
         with:
-          path: C:\Users\runneradmin\AppData\Local\Temp\chocolatey
-          key: ${{ runner.os }}-chocolatey-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-chocolatey-
-      - name: Install elixir, zstd, make and mingw
+          path: C:\Users\runneradmin\scoop\cache
+          key: ${{ runner.os }}-scoop-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-scoop-
+      - name: Setup scoop
+        uses: MinoruSekine/setup-scoop@v1
+      - name: Install erlang, elixir and make
         run: |
-          cinst elixir zstandard make mingw --no-progress
-          set MIX_ENV=test
-          echo "C:\ProgramData\chocolatey\lib\Elixir\bin;C:\ProgramData\chocolatey\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - name: Build and test
+          scoop install erlang 
+          scoop install elixir 
+          echo $env:USERPROFILE\scoop\apps\erlang\current\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo $env:USERPROFILE\scoop\apps\elixir\current\bin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+      - run: mix deps.get
+
+      - name: Build (Command Prompt)
+        run: mix compile --warnings-as-errors
+        shell: cmd
         env:
           MAKE: make
           CC: gcc
+      - name: Test (Command Prompt)
+        run: mix test
         shell: cmd
+        env:
+          MAKE: make
+          CC: gcc
+
+      - name: Clean up test files
+        run: Remove-Item 'tmp' -Recurse -Force
+      - run: mix clean --deps
+        env:
+          MAKE: make
+          CC: gcc
+
+      - name: Compile (PowerShell)
+        run: mix compile --warnings-as-errors
+        env:
+          MAKE: make
+          CC: gcc
+      - name: Test (PowerShell)
+        run: mix test
+        env:
+          MAKE: make
+          CC: gcc
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          path-type: inherit
+      - name: Compile and test (MSYS2)
+        env:
+          MAKE: make
+          CC: gcc
+        shell: msys2 {0}
         run: |
-          echo "$PATH"
-          mix local.hex --force
-          mix local.rebar --force
+          rm -rf ./tmp
+          mix clean --deps
           mix deps.get
           mix compile --warnings-as-errors
           mix test
