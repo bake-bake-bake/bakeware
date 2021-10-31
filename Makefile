@@ -27,6 +27,7 @@ LDFLAGS ?=
 OUTPUT_FLAGS = -o
 ifeq ($(OS),Windows_NT)
 	OUTPUT_FLAGS = -pipe -Wl,-o
+	SHELL = cmd
 endif
 
 BAKEWARE_OBJECTS = \
