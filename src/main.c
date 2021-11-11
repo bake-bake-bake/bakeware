@@ -14,7 +14,9 @@ struct bakeware bw;
 
 static void process_arguments(int argc, char *argv[])
 {
-    for (int i = 1; i < argc; i++) {
+    int i;
+
+    for (i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--") == 0) {
             argv[i] = "";
             break;
@@ -49,7 +51,9 @@ static void update_environment(int argc, char *argv[])
     bw_set_environment("BAKEWARE_EXECUTABLE", -1, bw.path);
 
     int arg_index = 0;
-    for (int i = 1; i < argc; i++) {
+    int i;
+
+    for (i = 1; i < argc; i++) {
         const char *arg = argv[i];
 
         if (*arg == '\0')
