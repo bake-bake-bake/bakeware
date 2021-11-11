@@ -60,9 +60,11 @@ ZSTD_BUILD_DIRS = $(BUILD)/zstd/lib/decompress $(BUILD)/zstd/lib/common
 all: $(BUILD) $(PREFIX) $(ZSTD_BUILD_DIRS) $(PREFIX)/launcher
 
 $(BUILD)/%.o: src/%.c
+	@echo " CC $(notdir $@)"
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(PREFIX)/launcher: $(BAKEWARE_OBJECTS) $(ZSTD_OBJECTS)
+	@echo " LD $(notdir $@)"
 	$(CC) $^ $(LDFLAGS) $(OUTPUT_FLAGS)$@
 	strip $@
 
@@ -80,3 +82,5 @@ clean:
 
 .PHONY: all clean calling_from_make
 
+# Don't echo commands unless the caller exports "V=1"
+${V}.SILENT:
