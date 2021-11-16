@@ -27,8 +27,8 @@ Here's a quick list of features:
 
 * Simple - add the `bakeware` dependency and the Bakeware assembler to your Mix
   release settings
-* Supports OSX and Linux (We wrote the code with Windows and the BSDs in mind,
-  so support for those platforms may not be far off)
+* Supports OSX, Linux and Windows (we wrote the code with the BSDs in mind,
+  so support may not be far off)
 * [Zstandard compression](https://en.wikipedia.org/wiki/Zstandard) for smaller
   binaries
 * Optional support for automatic software updates (work in progress)
