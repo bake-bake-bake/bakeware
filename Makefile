@@ -69,7 +69,7 @@ $(PREFIX)/launcher: $(BAKEWARE_OBJECTS) $(ZSTD_OBJECTS)
 ifeq ($(OS),Windows_NT)
 $(PREFIX) $(BUILD) $(ZSTD_BUILD_DIRS):
 #	mkdir "$@"
-	mkdir "$@" -Force -ErrorAction SilentlyContinue
+	if not exist "$@" mkdir "$@" /v
 else
 $(PREFIX) $(BUILD) $(ZSTD_BUILD_DIRS):
 	mkdir -p $@
