@@ -68,7 +68,8 @@ $(PREFIX)/launcher: $(BAKEWARE_OBJECTS) $(ZSTD_OBJECTS)
 
 ifeq ($(OS),Windows_NT)
 $(PREFIX) $(BUILD) $(ZSTD_BUILD_DIRS):
-	mkdir "$@"
+#	mkdir "$@"
+	New-Item -Path "$@" -ItemType Directory
 else
 $(PREFIX) $(BUILD) $(ZSTD_BUILD_DIRS):
 	mkdir -p $@
