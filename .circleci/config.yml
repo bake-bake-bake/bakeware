@@ -3,10 +3,10 @@ version: 2.1
 parameters:
   elixir:
     type: string
-    default: "1.12.3"
+    default: "1.13.2"
   erlang:
     type: string
-    default: "24.1"
+    default: "24.2.1"
 
 example_requires: &example_requires
   requires:
@@ -178,7 +178,7 @@ commands:
 executors:
   alpine: &alpine
     docker:
-      - image: hexpm/elixir:<< pipeline.parameters.elixir >>-erlang-<< pipeline.parameters.erlang >>-alpine-3.14.0
+      - image: hexpm/elixir:<< pipeline.parameters.elixir >>-erlang-<< pipeline.parameters.erlang >>-alpine-3.15.0
     environment:
       LC_ALL: C.UTF-8
       SUDO: true
@@ -189,7 +189,7 @@ executors:
     working_directory: ~/repo
   ubuntu: &ubuntu
     docker:
-      - image: hexpm/elixir:1.12.3-erlang-24.1-ubuntu-groovy-20210325
+      - image: hexpm/elixir:1.13.2-erlang-24.2.1-ubuntu-impish-20211102
     environment:
       LC_ALL: C.UTF-8
       SUDO: true
@@ -298,7 +298,7 @@ jobs:
                 steps:
                   - run:
                       name: Install node
-                      command: apk add nodejs npm
+                      command: apk add --update nodejs npm python3 py3-pip
             - when:
                 condition:
                   equal: [ubuntu, << parameters.os >>]
