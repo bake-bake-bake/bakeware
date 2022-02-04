@@ -87,10 +87,14 @@ defmodule Bakeware.CPIO do
   defp maybe_write_file_contents(%{type: :directory}, _cpio_fd), do: :ignore
 
   defp maybe_write_file_contents(file, cpio_fd) do
+    # :all will be deprecated in Elixir v1.17 but fails diaylzer.
+    # :eof also is only available in >= 1.13, so conditionally use it
+    read_arg = if System.version() =~ ~r/^1.13/, do: :eof, else: :all
+
     # Read the file and append to CPIO
     {:ok, :ok} =
       File.open(file.path, [:read], fn fd ->
-        IO.binwrite(cpio_fd, IO.binread(fd, :all))
+        IO.binwrite(cpio_fd, IO.binread(fd, read_arg))
       end)
   end
 
