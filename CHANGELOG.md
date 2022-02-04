@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.2.3
+
+### Added
+
+- reduce Makefile prints
+
+### Fixed
+
+- Fix mkdir on windows (#128 - thanks @Fl4m3Ph03n1x)
+- Use initial 'for' loop delcarations for systems without C99 mode set
+
 ## v0.2.2
 
 ### Fixed
