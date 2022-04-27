@@ -94,7 +94,10 @@ defmodule Bakeware.CPIO do
     # Read the file and append to CPIO
     {:ok, :ok} =
       File.open(file.path, [:read], fn fd ->
-        IO.binwrite(cpio_fd, IO.binread(fd, read_arg))
+        case IO.binread(fd, read_arg) do
+          :eof -> IO.binwrite(cpio_fd, "")
+          bin -> IO.binwrite(cpio_fd, bin)
+        end
       end)
   end
 
