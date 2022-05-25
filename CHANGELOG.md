@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.4
+
+### Fixed
+
+- Fix binread eof (#131 - thanks @ vans163)
+
 ## v0.2.3
 
 ### Added
