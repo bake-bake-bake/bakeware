@@ -7,6 +7,8 @@
 [![License](https://img.shields.io/hexpm/l/bakeware.svg)](https://hex.pm/packages/bakeware)
 [![Last updated](https://img.shields.io/github/last-commit/bake-bake-bake/bakeware.svg)](https://github.com/bake-bake-bake/bakeware/commits/main)
 
+# Bakeware is no longer maintained. Please see [Burrito](https://github.com/burrito-elixir/burrito).
+
 Compile Elixir applications into single, easily distributed executable binaries
 
 ![The Bakeware oven](https://raw.githubusercontent.com/bake-bake-bake/bakeware/main/assets/bakeware_logo200.png)
@@ -183,9 +185,9 @@ guides](https://packaging.python.org/guides/packaging-binary-extensions/#buildin
 
 Sometimes wierd SSL state bugs arise with a release when openssl is not statically compiled in.
 You're affected by these ssl issues if you see things like an SSL connection being established but
-after sending the first packet the remote end drops you. Attached is a Dockerfile that can be 
-built with Podman and used to build your baked released.  
-  
+after sending the first packet the remote end drops you. Attached is a Dockerfile that can be
+built with Podman and used to build your baked released.
+
 ```
 #Edit the versions of libraries in Dockerfile
 ENV SSL_VERSION=1.1.1j
